@@ -1,24 +1,37 @@
 const express = require('express');
-const sql = require('./config/database');
+const cors = require('cors'); // Added for CORS support
+const dotenv = require('dotenv');
+const sql = require('./config/database'); // Assuming it connects to the DB
 const registerRoute = require('./auth/register');
-const loginRoute = require('./auth/login')
-require('dotenv').config();
+const loginRoute = require('./auth/login');
 
-// // Load environment variables
-// dotenv.config();
+// Load environment variables
+dotenv.config();
 
 const app = express();
-const port = 5056;
+const PORT = process.env.PORT || 5056;
 
 // Middleware
 app.use(express.json());
+
+// CORS Configuration
+app.use(cors({
+    origin: 'http://localhost:3000', // Replace with your frontend URL
+    methods: ['GET', 'POST'], // Specify allowed methods
+    credentials: true, // Allow credentials like cookies, authorization headers
+}));
 
 // Routes
 app.use('/api', registerRoute);
 app.use('/api', loginRoute);
 
+// Basic error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal Server Error' });
+});
+
 // Start server
-const PORT = process.env.PORT || 5056;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${PORT}`);
 });

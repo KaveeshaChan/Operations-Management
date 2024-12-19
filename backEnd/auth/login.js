@@ -7,7 +7,7 @@ const router = express.Router();
 // Login Route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
+  console.log(`Login attempt for email: ${email}, ${password}`);
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
@@ -15,22 +15,35 @@ router.post('/login', async (req, res) => {
 
   try {
     const pool = await poolPromise; // Get the database connection
+
+    // Query to join Users table with Roles table to get RoleName
     const result = await pool
       .request()
       .input('email', sql.VarChar, email)
-      .query('SELECT * FROM Users WHERE Email = @email');
+      .query(`
+        SELECT 
+          u.UserID, 
+          u.PasswordHash, 
+          u.RoleID, 
+          r.RoleName 
+        FROM Users u
+        INNER JOIN Roles r ON u.RoleID = r.RoleID
+        WHERE u.Email = @email
+      `);
+      console.log(result);
 
     const user = result.recordset[0];
-    if (!user) return res.status(404).json({ message: 'User not found.' });
+    if (!user || !(await bcrypt.compare(password, user.PasswordHash))) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
 
-    const isValid = await bcrypt.compare(password, user.PasswordHash);
-    if (!isValid) return res.status(401).json({ message: 'Invalid credentials.' });
-
+    // Create a JWT token
     const token = jwt.sign(
-      { userId: user.UserID, roleID: user.RoleID },
+      { userId: user.UserID, roleID: user.RoleID, roleName: user.RoleName },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
+    console.log(token);
 
     res.json({ token, message: 'Login successful.' });
   } catch (err) {

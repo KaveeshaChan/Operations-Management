@@ -1,17 +1,17 @@
 const express = require('express');
 const { sql, poolPromise } = require('../config/database');
 const bcrypt = require('bcryptjs');
-const { getAllFromUsers, userRegistration } = require('../../auth/register');
+const { getAllFromUsers, mainUserRegistration } = require('../../auth/queries/mainUserRegistrationQuery');
 
 const router = express.Router();
 
 // Register Route
 router.post('/addMainUser', async (req, res) => {
-  const { User_Contact_Number, email, password, Freight_Agent, roleName } = req.body;
+  const { Main_User_Name, email, User_Contact_Number, password } = req.body;
   console.log(req.body);
 
-  if (!email || !password || !roleName) {
-    return res.status(400).json({ error: 'Email, password, and role name are required.' });
+  if (!email || !password || !Main_User_Name || !User_Contact_Number) {
+    return res.status(400).json({ error: 'Email, password, username and contact number are required.' });
   }
 
   try {
@@ -31,12 +31,11 @@ router.post('/addMainUser', async (req, res) => {
     // Insert user into the database
     await pool
       .request()
-      .input('User_Contact_Number', sql.VarChar, User_Contact_Number)
-      .input('email', sql.VarChar, email)
+      .input('Main_User_Name', sql.VarChar, Main_User_Name)
+      .input('ContactNumber', sql.VarChar, User_Contact_Number)
+      .input('Email', sql.VarChar, email)
       .input('hashedPassword', sql.VarChar, hashedPassword)
-      .input('Freight_Agent', sql.VarChar, Freight_Agent)
-      .input('roleName', sql.VarChar, roleName)
-      .query(userRegistration);
+      .query(mainUserRegistration);
 
     res.status(201).json({ message: 'User registered successfully.' });
   } catch (err) {

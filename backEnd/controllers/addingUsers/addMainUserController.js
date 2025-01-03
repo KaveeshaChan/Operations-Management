@@ -1,12 +1,12 @@
 const express = require('express');
 const { sql, poolPromise } = require('../config/database');
 const bcrypt = require('bcryptjs');
-const { getAllFromUsers, userRegistration } = require('./queries/freightAgentRegisterQuery');
+const { getAllFromUsers, userRegistration } = require('../../auth/register');
 
 const router = express.Router();
 
 // Register Route
-router.post('/register', async (req, res) => {
+router.post('/addMainUser', async (req, res) => {
   const { User_Contact_Number, email, password, Freight_Agent, roleName } = req.body;
   console.log(req.body);
 

@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const sql = require('./config/database'); // Assuming it connects to the DB
 const registerRoute = require('./auth/register');
 const loginRoute = require('./auth/login');
+const addFreightAgentRoute = require('./controllers/addingUsers/addFreightAgentController')
+const addFreightAgentCoordinator = require('./controllers/addingUsers/addFACoordinatorController')
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +26,8 @@ app.use(cors({
 // Routes
 app.use('/api', registerRoute);
 app.use('/api', loginRoute);
+app.use('/api', addFreightAgentRoute);
+app.use('/api', addFreightAgentCoordinator)
 
 // Basic error handling middleware
 app.use((err, req, res, next) => {

@@ -7,7 +7,7 @@ const router = express.Router();
 // Login Route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log(`Login attempt for email: ${email}, ${password}`);
+  console.log(`Login attempt for email: ${email}`);
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
@@ -30,7 +30,6 @@ router.post('/login', async (req, res) => {
         INNER JOIN Roles r ON u.RoleID = r.RoleID
         WHERE u.Email = @email
       `);
-      console.log(result);
 
     const user = result.recordset[0];
     if (!user || !(await bcrypt.compare(password, user.PasswordHash))) {
@@ -43,7 +42,6 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    console.log(token);
 
     res.json({ token, message: 'Login successful.' });
   } catch (err) {

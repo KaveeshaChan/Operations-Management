@@ -1,16 +1,15 @@
 const express = require('express');
-const { sql, poolPromise } = require('../config/database');
+const { sql, poolPromise } = require('../../config/database');
 const bcrypt = require('bcryptjs');
 const { getAllFromUsers, mainUserRegistration } = require('../../auth/queries/mainUserRegistrationQuery');
 
 const router = express.Router();
 
 // Register Route
-router.post('/addMainUser', async (req, res) => {
-  const { Main_User_Name, email, User_Contact_Number, password } = req.body;
-  console.log(req.body);
+router.post('/add-main-user', async (req, res) => {
+  const { name, email, contactNumber, password } = req.body;
 
-  if (!email || !password || !Main_User_Name || !User_Contact_Number) {
+  if (!email || !password || !name || !contactNumber) {
     return res.status(400).json({ error: 'Email, password, username and contact number are required.' });
   }
 
@@ -25,22 +24,27 @@ router.post('/addMainUser', async (req, res) => {
       .query(getAllFromUsers);
 
     if (existingUser.recordset.length > 0) {
-      return res.status(409).json({ error: 'Email already in use.' });
+      const errorResponse = { error: 'Email already in use.' };
+      console.log('Response:', errorResponse);
+      return res.status(409).json(errorResponse);
     }
 
     // Insert user into the database
     await pool
       .request()
-      .input('Main_User_Name', sql.VarChar, Main_User_Name)
-      .input('ContactNumber', sql.VarChar, User_Contact_Number)
+      .input('Main_User_Name', sql.VarChar, name)
+      .input('ContactNumber', sql.VarChar, contactNumber)
       .input('Email', sql.VarChar, email)
-      .input('hashedPassword', sql.VarChar, hashedPassword)
+      .input('PasswordHash', sql.VarChar, hashedPassword)
       .query(mainUserRegistration);
 
-    res.status(201).json({ message: 'User registered successfully.' });
+    const successResponse = { message: 'User registered successfully.' };
+    res.status(201).json(successResponse);
   } catch (err) {
+    const errorResponse = { error: 'Internal Server Error.' };
     console.error('Error:', err.message);
-    res.status(500).json({ error: 'Internal Server Error.' });
+    console.log('Response:', errorResponse);
+    res.status(500).json(errorResponse);
   }
 });
 

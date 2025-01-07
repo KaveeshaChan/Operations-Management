@@ -44,6 +44,7 @@ router.post('/add-freight-agent', async (req, res) => {
       .input('Director2_Contact_Number', sql.VarChar, director2ContactNumber)
       .input('Director2_Email', sql.VarChar, director2Email)
       .input('PasswordHash', sql.VarChar, hashedPassword)
+      .input('AgentStatus', sql.VarChar, 'Active')
       .query(freightAgentRegistration);
 
     res.status(201).json({ message: 'Freight Agent registered successfully.' });

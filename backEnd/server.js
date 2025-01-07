@@ -7,6 +7,7 @@ const loginRoute = require('./auth/login');
 const addFreightAgentRoute = require('./controllers/addingUsers/addFreightAgentController')
 const addFreightAgentCoordinator = require('./controllers/addingUsers/addFACoordinatorController')
 const addMainUserRoute = require('./controllers/addingUsers/addMainUserController')
+const documentHandlingRoute = require('./routes/addDocsRoutes')
 
 // Load environment variables
 dotenv.config();
@@ -30,6 +31,7 @@ app.use('/api', loginRoute);
 app.use('/api', addFreightAgentRoute);
 app.use('/api', addFreightAgentCoordinator)
 app.use('/api', addMainUserRoute)
+app.use('/api', documentHandlingRoute)
 
 // Basic error handling middleware
 app.use((err, req, res, next) => {

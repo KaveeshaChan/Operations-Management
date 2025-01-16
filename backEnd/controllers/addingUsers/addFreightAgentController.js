@@ -6,7 +6,7 @@ const { getAllFromFreightAgent, freightAgentRegistration } = require('../../auth
 const router = express.Router();
 
 // Register Route
-router.post('/add-freight-agent', async (req, res) => {
+router.post('/', async (req, res) => {
   const { name, BRN, address, contactNumber, email, director1ContactNumber, director1Email, director1Name, director2ContactNumber, director2Email, director2Name, password, country} = req.body;
   console.log(name, BRN, address, contactNumber, email, director1ContactNumber, director1Email, director1Name, director2ContactNumber, director2Email, director2Name, password, country);
 

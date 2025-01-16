@@ -1,5 +1,5 @@
 const getFreightAgentsList = `
-    SELECT AgentID, Freight_Agent FROM Freight_Agents
+    SELECT AgentID, Freight_Agent FROM Freight_Agents WHERE AgentID <> -99
 `;
 
 const getAllFromFACoordinators = `

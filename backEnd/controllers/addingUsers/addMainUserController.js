@@ -6,7 +6,7 @@ const { getAllFromUsers, mainUserRegistration } = require('../../auth/queries/ma
 const router = express.Router();
 
 // Register Route
-router.post('/add-main-user', async (req, res) => {
+router.post('/', async (req, res) => {
   const { name, email, contactNumber, password } = req.body;
 
   if (!email || !password || !name || !contactNumber) {

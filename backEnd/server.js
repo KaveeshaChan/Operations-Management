@@ -2,12 +2,13 @@ const express = require('express');
 const cors = require('cors'); // Added for CORS support
 const dotenv = require('dotenv');
 const sql = require('./config/database'); // Assuming it connects to the DB
+const { authorizeRoles } = require('./middlewares/authMiddleware');
 const registerRoute = require('./auth/register');
 const loginRoute = require('./auth/login');
 const addFreightAgentRoute = require('./controllers/addingUsers/addFreightAgentController')
-const addFreightAgentCoordinator = require('./controllers/addingUsers/addFACoordinatorController')
+const addFreightAgentCoordinatorRoute = require('./controllers/addingUsers/addFACoordinatorController')
 const addMainUserRoute = require('./controllers/addingUsers/addMainUserController')
-const documentHandlingRoute = require('./routes/addDocsRoutes')
+const orderHandlingRoute = require('./routes/orderRoutes')
 
 // Load environment variables
 dotenv.config();
@@ -28,10 +29,10 @@ app.use(cors({
 // Routes
 app.use('/api', registerRoute);
 app.use('/api', loginRoute);
-app.use('/api', addFreightAgentRoute);
-app.use('/api', addFreightAgentCoordinator)
-app.use('/api', addMainUserRoute)
-app.use('/api', documentHandlingRoute)
+app.use('/api/add-freight-agent', authorizeRoles(['admin', 'mainUser']), addFreightAgentRoute);
+app.use('/api/addFreightAgentCoordinator', authorizeRoles(['admin', 'mainUser']), addFreightAgentCoordinatorRoute);
+app.use('/api/add-main-user', authorizeRoles(['admin']), addMainUserRoute);
+app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser']), orderHandlingRoute);
 
 // Basic error handling middleware
 app.use((err, req, res, next) => {

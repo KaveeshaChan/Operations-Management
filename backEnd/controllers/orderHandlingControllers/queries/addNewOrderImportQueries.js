@@ -1,26 +1,26 @@
 const addImportAirFreight = `
-        INSERT INTO OrderDocs (orderType, shipmentType, orderNumber, from, to, 
-            shipmentReadyDate, deliveryTerm, Type, cargoType, numberOfPallets, chargeableWeight, 
-            grossWeight, cargoCBM, LWHWithThePallet, productDescription, targetDate, documentDetails)
+        INSERT INTO OrderDocs (orderType, shipmentType, orderNumber, [from], [to], 
+            shipmentReadyDate, deliveryTerm, [Type], cargoType, numberOfPallets, chargeableWeight, 
+            grossWeight, cargoCBM, LWHWithThePallet, productDescription, targetDate, additionalNotes, documentData, documentName)
         VALUES (@orderType, @shipmentType, @orderNumber, @from, @to, @shipmentReadyDate, @deliveryTerm, 
-            @Type, @cargoType, @numberOfPallets, @chargeableWeight, @grossWeight, @cargoCBM, LWHWithThePallet,  
-            @productDescription, @targetDate, @documentDetails);
+            @Type, @cargoType, @numberOfPallets, @chargeableWeight, @grossWeight, @cargoCBM, @LWHWithThePallet,  
+            @productDescription, @targetDate, @additionalNotes, @documentData, @documentName);
 `;
 
 const addImportLCL = `
-        INSERT INTO OrderDocs (orderType, shipmentType, orderNumber, from, to, 
+        INSERT INTO OrderDocs (orderType, shipmentType, orderNumber, [from], [to], 
             shipmentReadyDate, deliveryTerm, Type, numberOfPallets, palletCBM, cargoCBM,
-            grossWeight, targetDate, productDescription, documentDetails)
+            grossWeight, targetDate, productDescription, additionalNotes, documentData, documentName)
         VALUES (@orderType, @shipmentType, @orderNumber, @from, @to, 
             @shipmentReadyDate, @deliveryTerm, @Type, @numberOfPallets, @palletCBM, @cargoCBM,
-            @grossWeight, @targetDate, @productDescription, @documentDetails);
+            @grossWeight, @targetDate, @productDescription, @additionalNotes, @documentData, @documentName);
 `;
 
 const addImportFCL = `
-        INSERT INTO OrderDocs (orderType, shipmentType, orderNumber, from, to, 
-            shipmentReadyDate, deliveryTerm, Type, numberOfContainers, productDescription, targetDate, documentDetails)
+        INSERT INTO OrderDocs (orderType, shipmentType, orderNumber, [from], [to], 
+            shipmentReadyDate, deliveryTerm, [Type], numberOfContainers, productDescription, targetDate, additionalNotes, documentData, documentName)
         VALUES (@orderType, @shipmentType, @orderNumber, @from, @to, 
-            @shipmentReadyDate, @deliveryTerm, @Type, @numberOfContainers, @productDescription, @targetDate, @documentDetails);
+            @shipmentReadyDate, @deliveryTerm, @Type, @numberOfContainers, @productDescription, @targetDate, @additionalNotes, @documentData, @documentName);
 `;
 
 module.exports = {

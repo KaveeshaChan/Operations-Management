@@ -11,7 +11,7 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     -- Insert into Main_Users table
-    INSERT INTO Main_Users (MainUserName, ContactNumber, Email, PasswordHash)
+    INSERT INTO Main_Users (MainUserName, Email, ContactNumber, PasswordHash)
     VALUES (
         @Main_User_Name,
         @Email,

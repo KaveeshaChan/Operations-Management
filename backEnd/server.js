@@ -11,6 +11,8 @@ const addFreightAgentRoute = require('./controllers/addingUsers/addFreightAgentC
 const addFreightAgentCoordinatorRoute = require('./controllers/addingUsers/addFACoordinatorController');
 const addMainUserRoute = require('./controllers/addingUsers/addMainUserController');
 const orderHandlingRoute = require('./routes/orderRoutes');
+const selectRoute = require('./routes/selectRoutes')
+const updateRoutes = require('./routes/updateRoutes')
 
 // Load environment variables
 dotenv.config();
@@ -47,6 +49,8 @@ app.use('/api/add-freight-agent', authorizeRoles(['admin', 'mainUser']), addFrei
 app.use('/api/addFreightAgentCoordinator', authorizeRoles(['admin', 'mainUser']), addFreightAgentCoordinatorRoute);
 app.use('/api/add-main-user', authorizeRoles(['admin']), addMainUserRoute);
 app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser']), orderHandlingRoute);
+app.use('/api/select', authorizeRoles(['admin', 'mainUser']), selectRoute)
+app.use('/api/update', authorizeRoles(['admin', 'mainUser']), updateRoutes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {

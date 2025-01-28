@@ -11,13 +11,13 @@ router.post("/export-airFreight", async (req, res) => {
   const {
     orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate,
     deliveryTerm, type, cargoType, numberOfPallets, chargeableWeight, grossWeight,
-    cargoCBM, targetDate, fileUpload, fileName, additionalNotes,
+    cargoCBM, targetDate, fileUpload, fileName, additionalNotes, userId
   } = req.body;
   // Validate required fields
   if (
     !orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo ||
     !shipmentReadyDate || !deliveryTerm || !type || !cargoType || !chargeableWeight ||
-    !grossWeight || !cargoCBM || !targetDate
+    !grossWeight || !cargoCBM || !targetDate || !userId
   ) {
     return res.status(400).json({ message: "All required fields must be provided." });
   } 
@@ -58,6 +58,7 @@ router.post("/export-airFreight", async (req, res) => {
       .input("additionalNotes", sql.VarChar, additionalNotes || null)
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
+      .input("createdBy", sql.VarChar, userId)
       .query(addExportAirFreight);
 
     res.status(201).json({
@@ -71,10 +72,10 @@ router.post("/export-airFreight", async (req, res) => {
 
 router.post('/export-lcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, additionalNotes, fileUpload, fileName } = req.body;
+    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, additionalNotes, fileUpload, fileName, userId } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
-    !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate) {
+    !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate || !userId) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
@@ -113,6 +114,7 @@ router.post('/export-lcl', async (req, res) => {
       .input("additionalNotes", sql.VarChar, additionalNotes || null)
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
+      .input("createdBy", sql.VarChar, userId)
       .query(addExportLCL);
 
     res.status(201).json({
@@ -126,11 +128,11 @@ router.post('/export-lcl', async (req, res) => {
 
 router.post('/export-fcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    numberOfContainers, targetDate, fileUpload, fileName, additionalNotes } = req.body;
+    numberOfContainers, targetDate, fileUpload, fileName, additionalNotes, userId } = req.body;
 
   if (
     !orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
-    !deliveryTerm || !type || !numberOfContainers || !targetDate
+    !deliveryTerm || !type || !numberOfContainers || !targetDate || !userId
   ) {
     return res.status(400).json({ message: 'All fields are required.rg' });
   }
@@ -167,6 +169,7 @@ router.post('/export-fcl', async (req, res) => {
       .input("additionalNotes", sql.VarChar, additionalNotes || null)
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
+      .input("createdBy", sql.VarChar, userId)
       .query(addExportFCL);
 
     res.status(201).json({
@@ -182,11 +185,11 @@ router.post('/export-fcl', async (req, res) => {
 router.post('/import-airFreight', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, cargoType, 
     numberOfPallets, chargeableWeight, grossWeight, cargoCBM, LWHWithThePallet, productDescription, targetDate, additionalNotes,
-    fileUpload, fileName } = req.body;
+    fileUpload, fileName, userId } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
     !deliveryTerm || !type || !cargoType || !numberOfPallets || !chargeableWeight || !grossWeight || 
-    !cargoCBM || !targetDate) {
+    !cargoCBM || !targetDate || !userId) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
@@ -228,6 +231,7 @@ router.post('/import-airFreight', async (req, res) => {
       .input('additionalNotes', sql.VarChar, additionalNotes || null)
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
+      .input("createdBy", sql.VarChar, userId)
       .query(addImportAirFreight);
 
     res.status(201).json({
@@ -241,10 +245,10 @@ router.post('/import-airFreight', async (req, res) => {
 
 router.post('/import-lcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, productDescription, additionalNotes, fileUpload, fileName } = req.body;
+    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, productDescription, additionalNotes, fileUpload, fileName, userId } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
-    !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate) {
+    !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate || !userId) {
     return res.status(400).json({ message: 'All fields are required. bck' });
   }
 
@@ -284,6 +288,7 @@ router.post('/import-lcl', async (req, res) => {
       .input('additionalNotes', sql.VarChar, additionalNotes || null)
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
+      .input("createdBy", sql.VarChar, userId)
       .query(addImportLCL);
 
     res.status(201).json({
@@ -297,10 +302,10 @@ router.post('/import-lcl', async (req, res) => {
 
 router.post('/import-fcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    targetDate, numberOfContainers, productDescription, additionalNotes, fileUpload, fileName } = req.body;
+    targetDate, numberOfContainers, productDescription, additionalNotes, fileUpload, fileName, userId } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
-    !deliveryTerm || !type || !numberOfContainers || !targetDate) {
+    !deliveryTerm || !type || !numberOfContainers || !targetDate || !userId) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
@@ -337,6 +342,7 @@ router.post('/import-fcl', async (req, res) => {
       .input('additionalNotes', sql.VarChar, additionalNotes || null)
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
+      .input("createdBy", sql.VarChar, userId)
       .query(addImportFCL);
 
     res.status(201).json({

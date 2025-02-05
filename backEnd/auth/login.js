@@ -25,7 +25,8 @@ router.post('/login', async (req, res) => {
           u.UserID, 
           u.PasswordHash, 
           u.RoleID, 
-          r.RoleName 
+          r.RoleName,
+          u.AgentID 
         FROM Users u
         INNER JOIN Roles r ON u.RoleID = r.RoleID
         WHERE u.Email = @email
@@ -38,7 +39,7 @@ router.post('/login', async (req, res) => {
 
     // Create a JWT token
     const token = jwt.sign(
-      { userId: user.UserID, roleID: user.RoleID, roleName: user.RoleName },
+      { userId: user.UserID, roleID: user.RoleID, roleName: user.RoleName, agentID: user.agentID },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );

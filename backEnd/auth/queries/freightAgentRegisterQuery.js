@@ -18,7 +18,7 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     -- Insert into Freight_Agents table
-    INSERT INTO Freight_Agents (Freight_Agent, Address, ContactNumber, Email, Director1_Name, Director1_Contact_Number, Director1_Email, Director2_Name, Director2_Contact_Number, Director2_Email, BRNumber, Country, PasswordHash, AgentStatus)
+    INSERT INTO Freight_Agents (Freight_Agent, Address, ContactNumber, Email, Director1_Name, Director1_Contact_Number, Director1_Email, Director2_Name, Director2_Contact_Number, Director2_Email, BRNumber, Country, PasswordHash, AgentStatus, CreatedBy)
     VALUES (
         @Freight_Agent,
         @Address,
@@ -33,7 +33,8 @@ BEGIN TRY
         @BRNumber,
         @Country,
         @PasswordHash,
-        @AgentStatus
+        @AgentStatus,
+        @CreatedBy
     );
 
     -- Get the auto-generated AgentID

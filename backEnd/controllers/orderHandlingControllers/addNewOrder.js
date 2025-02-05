@@ -11,7 +11,7 @@ router.post("/export-airFreight", async (req, res) => {
   const {
     orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate,
     deliveryTerm, type, cargoType, numberOfPallets, chargeableWeight, grossWeight,
-    cargoCBM, targetDate, fileUpload, fileName, additionalNotes, userId
+    cargoCBM, targetDate, fileUpload, fileName, additionalNotes, userId, dueDate
   } = req.body;
   // Validate required fields
   if (
@@ -59,6 +59,7 @@ router.post("/export-airFreight", async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
+      .input("dueDate", sql.Int, dueDate)
       .query(addExportAirFreight);
 
     res.status(201).json({
@@ -72,7 +73,7 @@ router.post("/export-airFreight", async (req, res) => {
 
 router.post('/export-lcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, additionalNotes, fileUpload, fileName, userId } = req.body;
+    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, additionalNotes, fileUpload, fileName, userId, dueDate } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
     !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate || !userId) {
@@ -115,6 +116,7 @@ router.post('/export-lcl', async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
+      .input("dueDate", sql.Int, dueDate)
       .query(addExportLCL);
 
     res.status(201).json({
@@ -128,7 +130,7 @@ router.post('/export-lcl', async (req, res) => {
 
 router.post('/export-fcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    numberOfContainers, targetDate, fileUpload, fileName, additionalNotes, userId } = req.body;
+    numberOfContainers, targetDate, fileUpload, fileName, additionalNotes, userId, dueDate } = req.body;
 
   if (
     !orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
@@ -170,6 +172,7 @@ router.post('/export-fcl', async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
+      .input("dueDate", sql.Int, dueDate)
       .query(addExportFCL);
 
     res.status(201).json({
@@ -185,7 +188,7 @@ router.post('/export-fcl', async (req, res) => {
 router.post('/import-airFreight', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, cargoType, 
     numberOfPallets, chargeableWeight, grossWeight, cargoCBM, LWHWithThePallet, productDescription, targetDate, additionalNotes,
-    fileUpload, fileName, userId } = req.body;
+    fileUpload, fileName, userId, dueDate } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
     !deliveryTerm || !type || !cargoType || !numberOfPallets || !chargeableWeight || !grossWeight || 
@@ -232,6 +235,7 @@ router.post('/import-airFreight', async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
+      .input("dueDate", sql.Int, dueDate)
       .query(addImportAirFreight);
 
     res.status(201).json({
@@ -245,7 +249,7 @@ router.post('/import-airFreight', async (req, res) => {
 
 router.post('/import-lcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, productDescription, additionalNotes, fileUpload, fileName, userId } = req.body;
+    numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, productDescription, additionalNotes, fileUpload, fileName, userId, dueDate } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
     !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate || !userId) {
@@ -289,6 +293,7 @@ router.post('/import-lcl', async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
+      .input("dueDate", sql.Int, dueDate)
       .query(addImportLCL);
 
     res.status(201).json({
@@ -302,7 +307,7 @@ router.post('/import-lcl', async (req, res) => {
 
 router.post('/import-fcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
-    targetDate, numberOfContainers, productDescription, additionalNotes, fileUpload, fileName, userId } = req.body;
+    targetDate, numberOfContainers, productDescription, additionalNotes, fileUpload, fileName, userId, dueDate } = req.body;
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
     !deliveryTerm || !type || !numberOfContainers || !targetDate || !userId) {
@@ -343,6 +348,7 @@ router.post('/import-fcl', async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
+      .input("dueDate", sql.Int, dueDate)
       .query(addImportFCL);
 
     res.status(201).json({

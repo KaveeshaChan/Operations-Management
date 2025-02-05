@@ -25,7 +25,7 @@ router.get('/freight-agents-list', async (req, res) => {
 
 // Register Route
 router.post('/add-freight-coordinator', async (req, res) => {
-  const { name, contactNumber, email, freightAgent, password} = req.body;
+  const { name, contactNumber, email, freightAgent, password, userID} = req.body;
 
   if (!email || !password || !name || !freightAgent || !contactNumber) {
     return res.status(400).json({ error: 'Inputs are required.' });
@@ -53,6 +53,7 @@ router.post('/add-freight-coordinator', async (req, res) => {
       .input('Email', sql.VarChar, email)
       .input('Freight_Agent', sql.VarChar, freightAgent)
       .input('PasswordHash', sql.VarChar, hashedPassword)
+      .input('CreatedBy', sql.Int, userID)
       .query(FACoordinatorRegistration);
 
     res.status(200).json({ message: 'Freight Agent Coordinator registered successfully.' });

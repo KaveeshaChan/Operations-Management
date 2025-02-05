@@ -22,13 +22,14 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     -- Insert into Freight_Agents table
-    INSERT INTO FA_Coordinators (Coordinator_Name, ContactNumber, Email, Freight_Agent, PasswordHash)
+    INSERT INTO FA_Coordinators (Coordinator_Name, ContactNumber, Email, Freight_Agent, PasswordHash, CreatedBy)
     VALUES (
         @Coordinator_Name,
         @ContactNumber,
         @Email,
         @Freight_Agent,
-        @PasswordHash
+        @PasswordHash,
+        @CreatedBy
     );
 
     -- Insert into Users table

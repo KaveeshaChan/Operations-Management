@@ -7,8 +7,7 @@ const router = express.Router();
 
 // Register Route
 router.post('/', async (req, res) => {
-  const { name, BRN, address, contactNumber, email, director1ContactNumber, director1Email, director1Name, director2ContactNumber, director2Email, director2Name, password, country} = req.body;
-  console.log(name, BRN, address, contactNumber, email, director1ContactNumber, director1Email, director1Name, director2ContactNumber, director2Email, director2Name, password, country);
+  const { name, BRN, address, contactNumber, email, director1ContactNumber, director1Email, director1Name, director2ContactNumber, director2Email, director2Name, password, country, userID} = req.body;
 
   if (!email || !password || !BRN || !name || !country || !address || !contactNumber || !director1Name || !director1ContactNumber || !director1Email) {
     return res.status(400).json({ error: 'Inputs are required.' });
@@ -45,6 +44,7 @@ router.post('/', async (req, res) => {
       .input('Director2_Email', sql.VarChar, director2Email)
       .input('PasswordHash', sql.VarChar, hashedPassword)
       .input('AgentStatus', sql.VarChar, 'Active')
+      .input('CreatedBy', sql.Int, userID)
       .query(freightAgentRegistration);
 
     res.status(201).json({ message: 'Freight Agent registered successfully.' });

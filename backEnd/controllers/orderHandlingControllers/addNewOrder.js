@@ -1,7 +1,7 @@
 const express = require('express');
 const { sql, poolPromise } = require('../../config/database');
-const { addExportAirFreight, addExportLCL, addExportFCL } = require('./queries/addNewOrderExportQueries');
-const { addImportAirFreight, addImportLCL, addImportFCL } = require('./queries/addNewOrderImportQueries');
+const { addExportAirFreight, addExportLCL, addExportFCL } = require('./queries/addNewOrderQueries/addNewOrderExportQueries');
+const { addImportAirFreight, addImportLCL, addImportFCL } = require('./queries/addNewOrderQueries/addNewOrderImportQueries');
 
 const router = express.Router();
 
@@ -59,7 +59,7 @@ router.post("/export-airFreight", async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
-      .input("dueDate", sql.Int, dueDate)
+      .input("dueDate", sql.VarChar, dueDate)
       .query(addExportAirFreight);
 
     res.status(201).json({

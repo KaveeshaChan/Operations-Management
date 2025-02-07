@@ -1,32 +1,77 @@
-const express = require('express');
-const { sql, poolPromise } = require('../../config/database');
-
+const express = require("express");
+const { sql, poolPromise } = require("../../config/database");
+const { fetchAgentID, retrieveOrders, fetchDocumentData } = require('./queries/viewOrdersToAgentsQuery');
 
 const router = express.Router();
 
-router.post("/view-orders", async (req, res) => {
-    const { userID, AgentID } = req.body;
-    if (!userID || !AgentID){
-        return res.status(400).json({ message: "User ID or Agent ID not provided." });
-    }
+router.get("/", async (req, res) => {
+    const { userId } = req.user;
+    if (!userId) return res.status(400).json({ message: "User ID not provided." });
 
-    try{
+    try {
         const pool = await poolPromise;
 
-        // Check if user is under an Active agent
-        const checkUser = await pool
-        .request()
-        .input("AgentID", sql.Int, AgentID)
-        .query("SELECT COUNT(*) AS IsActive FROM Freight_Agents WHERE AgentID = @AgentID AND AgentStatus = 'Active';");
+        // Fetch AgentID & Check if Agent is Active
+        const agentCheck = await pool
+            .request()
+            .input("UserID", sql.Int, userId)
+            .query(fetchAgentID);
 
-        const isActive = checkUser.recordset[0].IsActive > 0;
+        const { AgentID, IsActive } = agentCheck.recordset[0] || {};
 
-        if (!isActive) {
-            return res.status(403).json({ message: "Agent is not active." });
-        }
-    } catch {
+        if (!AgentID) return res.status(404).json({ message: "Agent not found." });
+        if (!IsActive) return res.status(403).json({ message: "Agent is not active." });
 
+        // Retrieve Orders
+        const ordersQuery = await pool.request().query(retrieveOrders);
+
+        return res.status(200).json({ message: "Orders retrieved successfully.", orders: ordersQuery.recordset });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Internal Server Error.", error: error.message });
     }
-})
+});
+
+router.get("/documentData", async (req, res) => {
+    const { orderNumber } = req.body;
+    if (!orderNumber) {
+        return res.status(400).json({ message: "Order Number not provided." });
+    }
+
+    try {
+        const pool = await poolPromise;
+
+        // Fetch document data
+        const result = await pool
+            .request()
+            .input("orderNumber", sql.VarChar, orderNumber)
+            .query(fetchDocumentData);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ message: "No document found for this order number." });
+        }
+
+        const { documentData, documentName } = result.recordset[0];
+
+        if (!documentData) {
+            return res.status(404).json({ message: "No file uploaded for this order." });
+        }
+
+        // Convert Buffer to JSON (if originally stored as JSON)
+        const fileBuffer = Buffer.from(documentData);
+        const fileJson = JSON.parse(fileBuffer.toString()); // If JSON was stored
+
+        res.status(200).json({
+            message: "Document retrieved successfully.",
+            documentName,
+            documentData: fileJson // Sending parsed JSON
+        });
+
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+    }
+});
+
 
 module.exports = router;

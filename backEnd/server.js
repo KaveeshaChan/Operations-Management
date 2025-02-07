@@ -48,8 +48,8 @@ app.use('/api', loginRoute);
 app.use('/api/add-freight-agent', authorizeRoles(['admin', 'mainUser']), addFreightAgentRoute);
 app.use('/api/addFreightAgentCoordinator', authorizeRoles(['admin', 'mainUser']), addFreightAgentCoordinatorRoute);
 app.use('/api/add-main-user', authorizeRoles(['admin']), addMainUserRoute);
-app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser']), orderHandlingRoute);
-app.use('/api/select', authorizeRoles(['admin', 'mainUser']), selectRoute)
+app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser', 'commonUser']), orderHandlingRoute);
+app.use('/api/select', authorizeRoles(['admin', 'mainUser', 'commonUser']), selectRoute)
 app.use('/api/update', authorizeRoles(['admin', 'mainUser']), updateRoutes)
 
 // Error handling middleware

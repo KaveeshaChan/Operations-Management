@@ -6,16 +6,16 @@ const addImportAirFreight = `
 `;
 
 const addImportLCL = `
-        INSERT INTO Order_Quotations (orderNumber, AgentID, transShipmentPort, transitTime, vesselOrFlightDetails, 
-            validityTime, netFreight, totalFreight, createdBy)
-        VALUES (@orderNumber, @AgentID, @transShipmentPort, @transitTime, @vesselOrFlightDetails, @validityTime, 
-            @netFreight, @totalFreight, @createdBy);
+        INSERT INTO Order_Quotations (orderNumber, AgentID, netFreight, transShipmentPort, transitTime, 
+            vesselOrFlightDetails, freeTime, DOFee, validityTime, totalFreight, createdBy)
+        VALUES (@orderNumber, @AgentID, @netFreight, @transShipmentPort, @transitTime, @vesselOrFlightDetails, 
+            @freeTime, @DOFee, @validityTime, @totalFreight, @createdBy);
 `;
 
 const addImportFCL = `
-        INSERT INTO Order_Quotations (orderNumber, AgentID, netFreight, DTHC, freeTime, 
-            transShipmentPort, carrier, transitTime, vesselOrFlightDetails, validityTime, createdBy)
-        VALUES (@orderNumber, @AgentID, @netFreight, @DTHC, @freeTime, @transShipmentPort, 
+        INSERT INTO Order_Quotations (orderNumber, AgentID, netFreight, DOFee, transShipmentPort, 
+            freeTime, carrier, transitTime, vesselOrFlightDetails, validityTime, createdBy)
+        VALUES (@orderNumber, @AgentID, @netFreight, @DOFee, @transShipmentPort, @freeTime, 
             @carrier, @transitTime, @vesselOrFlightDetails, @validityTime, @createdBy);
 `;
 

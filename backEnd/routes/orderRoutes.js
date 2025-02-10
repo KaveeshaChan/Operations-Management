@@ -1,7 +1,6 @@
 const express = require('express');
 const { authorizeRoles } = require('./../middlewares/authMiddleware');
 const addNewOrderRoute = require('../controllers/orderHandlingControllers/addNewOrder');
-const viewOrdersToAgents = require('../controllers/orderHandlingControllers/viewOrdersToAgents');
 const addQuotationRoute = require('../controllers/orderHandlingControllers/addQuotations')
 
 const router = express.Router();

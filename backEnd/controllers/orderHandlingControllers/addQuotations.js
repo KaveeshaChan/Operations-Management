@@ -27,14 +27,17 @@ router.post("/export-airFreight", async (req, res) => {
       .request()
       .input("orderNumber", sql.VarChar, orderNumber)
       .query("SELECT TOP 1 chargeableWeight, grossWeight FROM OrderDocs WHERE orderNumber = @orderNumber");
-  
-      if (checkOrder.recordset.length > 0) {
-        const { chargeableWeight, grossWeight } = result.recordset[0];
-        console.log("Chargeable Weight:", chargeableWeight);
-        console.log("Gross Weight:", grossWeight);
-      } else {
-        return res.status(400).json({ message: "There is no order with this order number." });
-      }
+
+    let computedWeight;
+
+    if (checkOrder.recordset.length > 0) {
+      const { chargeableWeight, grossWeight } = checkOrder.recordset[0];
+
+      // Use chargeableWeight if it's greater, otherwise use grossWeight
+      computedWeight = chargeableWeight > grossWeight ? chargeableWeight : grossWeight;
+    } else {
+      return res.status(400).json({ message: "There is no order with this order number." });
+    }
 
     // Process each quotation in the array
     for (const data of quotations) {
@@ -42,27 +45,30 @@ router.post("/export-airFreight", async (req, res) => {
         netFreight, AWB, HAWB, airLine, transShipmentPort, transitTime, vesselOrFlightDetails, validityTime
       } = data;
 
-      // Validate required fields
-        if (!netFreight || !AWB || !HAWB || !airLine || !validityTime) {
-          return res.status(400).json({ message: "All required fields must be provided." });
-        }
+      // Ensure required fields are provided
+      if (!netFreight || !AWB || !HAWB || !airLine || !validityTime) {
+        return res.status(400).json({ message: "All required fields must be provided." });
+      }
 
-        // Insert into the database
-        await pool
-          .request()
-          .input("orderNumber", sql.VarChar, orderNumber)
-          .input("AgentID", sql.Int, agentID)
-          .input("netFreight", sql.Decimal, netFreight)
-          .input("transShipmentPort", sql.VarChar, transShipmentPort)
-          .input("transitTime", sql.Int, transitTime)
-          .input("vesselOrFlightDetails", sql.VarChar, vesselOrFlightDetails)
-          .input("totalFreight", sql.Decimal, 50.0)
-          .input("validityTime", sql.DateTime, new Date(validityTime)) 
-          .input("airLine", sql.VarChar, airLine)
-          .input("AWB", sql.VarChar, AWB)
-          .input("HAWB", sql.VarChar, HAWB)
-          .input("createdBy", sql.Int, userId)
-          .query(addExportAirFreight);
+      // Calculate totalFreight
+      const totalFreight = computedWeight * parseFloat(netFreight);
+
+      // Insert into the database
+      await pool
+        .request()
+        .input("orderNumber", sql.VarChar, orderNumber)
+        .input("AgentID", sql.Int, agentID)
+        .input("netFreight", sql.Decimal, netFreight)
+        .input("transShipmentPort", sql.VarChar, transShipmentPort)
+        .input("transitTime", sql.Int, transitTime)
+        .input("vesselOrFlightDetails", sql.VarChar, vesselOrFlightDetails)
+        .input("totalFreight", sql.Decimal, totalFreight)
+        .input("validityTime", sql.DateTime, new Date(validityTime)) 
+        .input("airLine", sql.VarChar, airLine)
+        .input("AWB", sql.VarChar, AWB)
+        .input("HAWB", sql.VarChar, HAWB)
+        .input("createdBy", sql.Int, userId)
+        .query(addExportAirFreight);
     }
     res.status(201).json({ message: "Quotation(s) added successfully." });
   } catch (err) {
@@ -91,9 +97,14 @@ router.post('/export-lcl', async (req, res) => {
     const checkOrder = await pool
       .request()
       .input("orderNumber", sql.VarChar, orderNumber)
-      .query("SELECT COUNT(*) AS count FROM OrderDocs WHERE orderNumber = @orderNumber");
+      .query("SELECT TOP 1 palletCBM FROM OrderDocs WHERE orderNumber = @orderNumber");
       
-      if (!checkOrder.recordset[0].count === 0) {
+      let palletCBM;
+
+      if (checkOrder.recordset.length > 0) {
+        palletCBM = checkOrder.recordset[0].palletCBM;       ;
+  
+      } else {
         return res.status(400).json({ message: "There is no order with this order number." });
       }
 
@@ -105,6 +116,9 @@ router.post('/export-lcl', async (req, res) => {
           return res.status(400).json({ message: 'All fields are required.' });
         }
 
+      // Calculate totalFreight
+      const totalFreight = palletCBM * parseFloat(netFreight);
+
         // Insert the new order into the database
         await pool
         .request()
@@ -115,7 +129,7 @@ router.post('/export-lcl', async (req, res) => {
         .input("vesselOrFlightDetails", sql.VarChar, vesselOrFlightDetails)
         .input("validityTime", sql.DateTime, new Date(validityTime))
         .input("netFreight", sql.Decimal, netFreight)
-        .input("totalFreight", sql.Decimal, 50.0)
+        .input("totalFreight", sql.Decimal, totalFreight)
         .input("createdBy", sql.Int, userId)
         .query(addExportLCL);
       }
@@ -205,9 +219,16 @@ router.post("/import-airFreight", async (req, res) => {
     const checkOrder = await pool
       .request()
       .input("orderNumber", sql.VarChar, orderNumber)
-      .query("SELECT COUNT(*) AS count FROM OrderDocs WHERE orderNumber = @orderNumber");
+      .query("SELECT TOP 1 chargeableWeight, grossWeight FROM OrderDocs WHERE orderNumber = @orderNumber");
 
-    if (checkOrder.recordset[0].count === 0) {
+    let computedWeight;
+
+    if (checkOrder.recordset.length > 0) {
+      const { chargeableWeight, grossWeight } = checkOrder.recordset[0];
+
+      // Use chargeableWeight if it's greater, otherwise use grossWeight
+      computedWeight = chargeableWeight > grossWeight ? chargeableWeight : grossWeight;
+    } else {
       return res.status(400).json({ message: "There is no order with this order number." });
     }
 
@@ -220,6 +241,9 @@ router.post("/import-airFreight", async (req, res) => {
         return res.status(400).json({ message: "All required fields must be provided." });
       }
 
+      // Calculate totalFreight
+      const totalFreight = computedWeight * parseFloat(netFreight);
+
       // Insert into the database
       await pool
         .request()
@@ -231,7 +255,7 @@ router.post("/import-airFreight", async (req, res) => {
         .input("transitTime", sql.Int, transitTime)
         .input("vesselOrFlightDetails", sql.VarChar, vesselOrFlightDetails)
         .input("validityTime", sql.DateTime, new Date(validityTime)) // Ensure validityTime is a Date
-        .input("totalFreight", sql.Decimal, 50.0) // Corrected type
+        .input("totalFreight", sql.Decimal, totalFreight) // Corrected type
         .input("createdBy", sql.Int, userId)
         .query(addImportAirFreight);
     }

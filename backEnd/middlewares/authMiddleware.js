@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const authorizeRoles = (allowedRoles) => (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -26,4 +27,37 @@ const authorizeRoles = (allowedRoles) => (req, res, next) => {
   }
 };
 
-module.exports = { authorizeRoles };
+async function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Authorization token required.' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Check token blacklist
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('tokenHash', sql.VarChar, tokenHash)
+      .query('SELECT 1 FROM TokenBlacklist WHERE TokenHash = @tokenHash');
+    
+    if (result.recordset.length > 0) {
+      return res.status(401).json({ message: 'Token has been invalidated.' });
+    }
+    // Attach user to request
+    req.user = decoded;
+    next();
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token has expired.' });
+    }
+    res.status(401).json({ message: 'Invalid token.' });
+  }
+}
+
+module.exports = { authorizeRoles, authMiddleware };

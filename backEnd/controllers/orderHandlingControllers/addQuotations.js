@@ -242,7 +242,7 @@ router.post("/import-airFreight", async (req, res) => {
       }
 
       // Calculate totalFreight
-      const totalFreight = computedWeight * parseFloat(netFreight);
+      const totalFreight = computedWeight * parseFloat(airFreightCost);
 
       // Insert into the database
       await pool
@@ -254,8 +254,8 @@ router.post("/import-airFreight", async (req, res) => {
         .input("carrier", sql.VarChar, carrier)
         .input("transitTime", sql.Int, transitTime)
         .input("vesselOrFlightDetails", sql.VarChar, vesselOrFlightDetails)
-        .input("validityTime", sql.DateTime, new Date(validityTime)) // Ensure validityTime is a Date
-        .input("totalFreight", sql.Decimal, totalFreight) // Corrected type
+        .input("validityTime", sql.DateTime, new Date(validityTime))
+        .input("totalFreight", sql.Decimal, totalFreight)
         .input("createdBy", sql.Int, userId)
         .query(addImportAirFreight);
     }
@@ -287,11 +287,16 @@ router.post('/import-lcl', async (req, res) => {
     const checkOrder = await pool
       .request()
       .input("orderNumber", sql.VarChar, orderNumber)
-      .query("SELECT COUNT(*) AS count FROM OrderDocs WHERE orderNumber = @orderNumber");
+      .query("SELECT TOP 1 palletCBM FROM OrderDocs WHERE orderNumber = @orderNumber");
 
-    if (checkOrder.recordset[0].count === 0) {
-      return res.status(400).json({ message: "There is no order with this order number." });
-    }
+      let palletCBM;
+
+      if (checkOrder.recordset.length > 0) {
+        palletCBM = checkOrder.recordset[0].palletCBM;       ;
+  
+      } else {
+        return res.status(400).json({ message: "There is no order with this order number." });
+      }
 
     // Process each quotation in the array
     for (const data of quotations) {
@@ -300,6 +305,9 @@ router.post('/import-lcl', async (req, res) => {
       if (!orderNumber || !validityTime || !netFreight) {
         return res.status(400).json({ message: 'All fields are required.' });
       }
+
+      // Calculate totalFreight
+      const totalFreight = palletCBM * parseFloat(netFreight);
 
       // Insert the new order into the database
       await pool
@@ -313,7 +321,7 @@ router.post('/import-lcl', async (req, res) => {
         .input("freeTime", sql.Int, freeTime)
         .input("DOFee", sql.Decimal, DOFee)
         .input("validityTime", sql.DateTime, new Date(validityTime))
-        .input("totalFreight", sql.Decimal, 50.0)
+        .input("totalFreight", sql.Decimal, totalFreight)
         .input("createdBy", sql.Int, userId)
         .query(addImportLCL);
     }

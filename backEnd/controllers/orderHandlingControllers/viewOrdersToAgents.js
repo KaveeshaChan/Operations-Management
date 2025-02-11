@@ -32,46 +32,46 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/documentData", async (req, res) => {
+router.post("/documentData", async (req, res) => {
     const { orderNumber } = req.body;
+    
     if (!orderNumber) {
-        return res.status(400).json({ message: "Order Number not provided." });
+      return res.status(400).json({ message: "Order Number not provided." });
     }
-
+  
     try {
-        const pool = await poolPromise;
-
-        // Fetch document data
-        const result = await pool
-            .request()
-            .input("orderNumber", sql.VarChar, orderNumber)
-            .query(fetchDocumentData);
-
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ message: "No document found for this order number." });
-        }
-
-        const { documentData, documentName } = result.recordset[0];
-
-        if (!documentData) {
-            return res.status(404).json({ message: "No file uploaded for this order." });
-        }
-
-        // Convert Buffer to JSON (if originally stored as JSON)
-        const fileBuffer = Buffer.from(documentData);
-        const fileJson = JSON.parse(fileBuffer.toString()); // If JSON was stored
-
-        res.status(200).json({
-            message: "Document retrieved successfully.",
-            documentName,
-            documentData: fileJson // Sending parsed JSON
-        });
-
+      const pool = await poolPromise;
+  
+      // Fetch document data
+      const result = await pool
+        .request()
+        .input("orderNumber", sql.VarChar, orderNumber)
+        .query(fetchDocumentData);
+  
+      if (result.recordset.length === 0) {
+        return res.status(404).json({ message: "No document found for this order number." });
+      }
+  
+      const { documentData, documentName } = result.recordset[0];
+  
+      if (!documentData) {
+        return res.status(404).json({ message: "No file uploaded for this order." });
+      }
+  
+      // Convert Buffer to Base64 string for transmission
+      const base64File = documentData.toString("base64");
+  
+      res.status(200).json({
+        message: "Document retrieved successfully.",
+        documentName,
+        documentData: base64File,
+      });
+  
     } catch (error) {
-        console.error("Database error:", error);
-        return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+      console.error("Database error:", error);
+      return res.status(500).json({ message: "Internal Server Error.", error: error.message });
     }
-});
-
+  });
+  
 
 module.exports = router;

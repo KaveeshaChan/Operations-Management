@@ -35,8 +35,8 @@ router.post("/export-airFreight", async (req, res) => {
       return res.status(400).json({ message: "Order with this Order Number already exists." });
     }
 
-    // Convert JSON to Buffer if fileUpload is provided
-    const buffer = fileUpload ? Buffer.from(JSON.stringify(fileUpload)) : null;
+    // Convert fileUpload (Base64 string from frontend) back to Buffer
+    const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
     // Insert into the database
     const result = await pool
@@ -59,7 +59,7 @@ router.post("/export-airFreight", async (req, res) => {
       .input("documentData",sql.VarBinary, buffer)
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
-      .input("dueDate", sql.VarChar, dueDate)
+      .input("dueDate", sql.Int, dueDate)
       .query(addExportAirFreight);
 
     res.status(201).json({
@@ -94,7 +94,7 @@ router.post('/export-lcl', async (req, res) => {
     }
 
     // Convert JSON to Buffer if fileUpload is provided
-    const buffer = fileUpload ? Buffer.from(JSON.stringify(fileUpload)) : null;
+    const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
     // Insert the new order into the database
     const result = await pool
@@ -153,10 +153,10 @@ router.post('/export-fcl', async (req, res) => {
     }
 
     // Convert JSON to Buffer if fileUpload is provided
-    const buffer = fileUpload ? Buffer.from(JSON.stringify(fileUpload)) : null;
+    const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
     // Insert the new order into the database
-    const result = await pool
+    await pool
       .request()
       .input('orderType', sql.NVarChar, orderType)
       .input('shipmentType', sql.NVarChar, shipmentType)
@@ -210,10 +210,10 @@ router.post('/import-airFreight', async (req, res) => {
         }
     
         // Convert JSON to Buffer if fileUpload is provided
-        const buffer = fileUpload ? Buffer.from(JSON.stringify(fileUpload)) : null;
+        const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
     // Insert the new order into the database
-    const result = await pool
+    await pool
       .request()
       .input('orderType', sql.NVarChar, orderType)
       .input('shipmentType', sql.NVarChar, shipmentType)
@@ -270,10 +270,10 @@ router.post('/import-lcl', async (req, res) => {
       }
 
       // Convert JSON to Buffer if fileUpload is provided
-      const buffer = fileUpload ? Buffer.from(JSON.stringify(fileUpload)) : null;
+      const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
     // Insert the new order into the database
-    const result = await pool
+    await pool
       .request()
       .input('orderType', sql.NVarChar, orderType)
       .input('shipmentType', sql.NVarChar, shipmentType)
@@ -328,10 +328,10 @@ router.post('/import-fcl', async (req, res) => {
       }
         
       // Convert JSON to Buffer if fileUpload is provided
-      const buffer = fileUpload ? Buffer.from(JSON.stringify(fileUpload)) : null;
+      const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
     // Insert the new order into the database
-    const result = await pool
+    await pool
       .request()
       .input('orderType', sql.NVarChar, orderType)
       .input('shipmentType', sql.NVarChar, shipmentType)

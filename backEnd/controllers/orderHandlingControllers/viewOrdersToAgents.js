@@ -1,7 +1,7 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../config/database");
 const { fetchAgentID, retrieveOrders, fetchDocumentData } = require('./queries/viewOrdersToAgentsQuery');
-
+const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -21,6 +21,21 @@ router.get("/", async (req, res) => {
 
         if (!AgentID) return res.status(404).json({ message: "Agent not found." });
         if (!IsActive) return res.status(403).json({ message: "Agent is not active." });
+
+        // Retrieve Orders
+        const ordersQuery = await pool.request().query(retrieveOrders);
+
+        return res.status(200).json({ message: "Orders retrieved successfully.", orders: ordersQuery.recordset });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+    }
+});
+
+router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+
+    try {
+        const pool = await poolPromise;
 
         // Retrieve Orders
         const ordersQuery = await pool.request().query(retrieveOrders);

@@ -6,6 +6,7 @@ const viewOrdersToAgents = require('../controllers/orderHandlingControllers/view
 const router = express.Router();
 
 router.use('/view-freight-agents', viewFreightAgentsRoute);
-router.use('/view-orders-agents', authorizeRoles(['commonUser']), viewOrdersToAgents)
+router.use('/view-orders', viewOrdersToAgents)
+
 
 module.exports = router;

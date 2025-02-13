@@ -9,7 +9,6 @@ const { authMiddleware } = require('../middlewares/authMiddleware');
 // Login Route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log(`Login attempt for email: ${email}`);
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });

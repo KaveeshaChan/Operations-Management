@@ -23,6 +23,7 @@ router.get("/", async (req, res) => {
 router.get("/coordinators/:agentID", async (req, res) => {
   try {
       const { agentID } = req.params;
+      console.log(agentID);
 
       if (!agentID) {
         return res.status(400).json({ message: "Agent ID is required." });

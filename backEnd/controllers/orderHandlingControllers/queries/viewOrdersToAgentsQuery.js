@@ -7,11 +7,41 @@ const fetchAgentID = `
 `;
 
 const retrieveOrders = `
-            SELECT OrderID, orderType, shipmentType, orderNumber, [from], [to], shipmentReadyDate, 
-                   deliveryTerm, cargoType, Type, numberOfPallets, numberOfContainers, LWHWithThePallet, 
-                   palletCBM, cargoCBM, grossWeight, chargeableWeight, targetDate, additionalNotes, 
-                   productDescription, documentName, orderCreatedDate, orderStatus, createdBy, dueDate
-            FROM FreightAgentAlloc_App.dbo.OrderDocs;
+SELECT 
+    OrderID, 
+    orderType, 
+    shipmentType, 
+    orderNumber, 
+    [from], 
+    [to], 
+    shipmentReadyDate, 
+    deliveryTerm, 
+    cargoType, 
+    Type, 
+    numberOfPallets, 
+    numberOfContainers, 
+    LWHWithThePallet, 
+    palletCBM, 
+    cargoCBM, 
+    grossWeight, 
+    chargeableWeight, 
+    targetDate, 
+    additionalNotes, 
+    productDescription, 
+    documentName, 
+    orderCreatedDate, 
+    orderStatus, 
+    createdBy, 
+    dueDate,
+    
+    -- Calculate the actual due date
+    DATEADD(DAY, dueDate, orderCreatedDate) AS actualDueDate,
+
+    -- Calculate remaining days before due date
+    DATEDIFF(DAY, GETUTCDATE(), DATEADD(DAY, dueDate, orderCreatedDate)) AS daysRemaining
+
+FROM FreightAgentAlloc_App.dbo.OrderDocs;
+
 `;
 
 const fetchDocumentData = `

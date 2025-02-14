@@ -1,7 +1,7 @@
 const updateOrderStatus = `
-            SELECT documentData, documentName
-            FROM FreightAgentAlloc_App.dbo.OrderDocs
-            WHERE orderNumber = @orderNumber
+    UPDATE OrderDocs
+    SET orderStatus = @orderStatus
+    WHERE orderID = @orderID
 `;
 
 module.exports = {

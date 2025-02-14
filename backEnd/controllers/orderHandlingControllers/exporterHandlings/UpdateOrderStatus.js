@@ -4,7 +4,7 @@ const { updateOrderStatus } = require('../queries/updateOrderStatusQuery');
 const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
 
-router.post("/updateOrderStatus", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
     const { orderID, status } = req.body;
     
     if (!orderID || !status) {

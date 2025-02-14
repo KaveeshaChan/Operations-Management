@@ -47,7 +47,6 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
             // If no orderID, fetch all orders
             result = await pool.request().query(retrieveOrders);
         }
-
         return res.status(200).json({ message: "Orders retrieved successfully.", orders: result.recordset });
     } catch (error) {
         console.error("Database error:", error);

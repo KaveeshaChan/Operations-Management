@@ -5,9 +5,9 @@ const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
 
 router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
-    const { orderID, status } = req.body;
+    const { OrderID, status } = req.body;
     
-    if (!orderID || !status) {
+    if (!OrderID || !status) {
       return res.status(400).json({ message: "Order Number or status is not provided." });
     }
   
@@ -17,7 +17,7 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
       // Fetch document data
       await pool
         .request()
-        .input("orderID", sql.Int, orderID)
+        .input("OrderID", sql.Int, OrderID)
         .input("orderStatus", sql.VarChar, status)
         .query(updateOrderStatus);
 

@@ -5,6 +5,6 @@ const updateOrderStatusRoute = require('../controllers/orderHandlingControllers/
 const router = express.Router();
 
 router.use('/update-freight-agents', updateFreightAgentsRoute);
-router.use('/status', updateOrderStatusRoute);
+router.use('/order-status', updateOrderStatusRoute);
 
 module.exports = router;

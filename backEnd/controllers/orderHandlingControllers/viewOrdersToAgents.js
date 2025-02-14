@@ -36,6 +36,7 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
     try {
         const pool = await poolPromise;
         const { orderID } = req.query; // Get orderID from query parameters
+        const { status } = req.query;
 
         let result;
         if (orderID) {
@@ -43,6 +44,11 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
             result = await pool.request()
                 .input("orderID", sql.Int, orderID)
                 .query(retrieveOrderWithOrderID);
+        } else if (status){
+            result = await pool.request()
+                .input("orderStatus", sql.VarChar, status
+                .query(retrieveOrders)
+                )
         } else {
             // If no orderID, fetch all orders
             result = await pool.request().query(retrieveOrders);

@@ -1,7 +1,7 @@
 const updateOrderStatus = `
     UPDATE OrderDocs
     SET orderStatus = @orderStatus
-    WHERE orderID = @orderID
+    WHERE OrderID = @OrderID
 `;
 
 module.exports = {

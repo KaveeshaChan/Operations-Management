@@ -1,6 +1,6 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../config/database");
-const { fetchAgentID, retrieveOrders, fetchDocumentData } = require('./queries/viewOrdersToAgentsQuery');
+const { fetchAgentID, retrieveOrders, fetchDocumentData, retrieveOrderWithOrderID } = require('./queries/viewOrdersToAgentsQuery');
 const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -33,14 +33,22 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
-
     try {
         const pool = await poolPromise;
+        const { orderID } = req.query; // Get orderID from query parameters
 
-        // Retrieve Orders
-        const ordersQuery = await pool.request().query(retrieveOrders);
+        let result;
+        if (orderID) {
+            // If orderID is provided, fetch a specific order
+            result = await pool.request()
+                .input("orderID", sql.Int, orderID)
+                .query(retrieveOrderWithOrderID);
+        } else {
+            // If no orderID, fetch all orders
+            result = await pool.request().query(retrieveOrders);
+        }
 
-        return res.status(200).json({ message: "Orders retrieved successfully.", orders: ordersQuery.recordset });
+        return res.status(200).json({ message: "Orders retrieved successfully.", orders: result.recordset });
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ message: "Internal Server Error.", error: error.message });
@@ -86,7 +94,6 @@ router.post("/documentData", async (req, res) => {
       console.error("Database error:", error);
       return res.status(500).json({ message: "Internal Server Error.", error: error.message });
     }
-  });
+});
   
-
 module.exports = router;

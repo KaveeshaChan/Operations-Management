@@ -47,7 +47,7 @@ FROM FreightAgentAlloc_App.dbo.OrderDocs od
 LEFT JOIN FreightAgentAlloc_App.dbo.Order_Quotations q 
     ON od.orderNumber = q.orderNumber  -- Assuming orderNumber is the link between the tables
 
-WHERE od.orderStatus = COALESCE(@status, 'active')
+WHERE od.orderStatus = @orderStatus
 GROUP BY 
     od.OrderID, od.orderType, od.shipmentType, od.orderNumber, od.[from], od.[to], 
     od.shipmentReadyDate, od.deliveryTerm, od.cargoType, od.Type, od.numberOfPallets, 

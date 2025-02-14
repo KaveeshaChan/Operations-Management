@@ -35,30 +35,28 @@ router.get("/", async (req, res) => {
 router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
     try {
         const pool = await poolPromise;
-        const { orderID } = req.query; // Get orderID from query parameters
-        const { status } = req.query;
+        const { orderID, status } = req.query; // Get orderID & status from query parameters
 
         let result;
         if (orderID) {
-            // If orderID is provided, fetch a specific order
+            // Fetch a specific order
             result = await pool.request()
-                .input("orderID", sql.Int, orderID)
+                .input("OrderID", sql.Int, orderID)
                 .query(retrieveOrderWithOrderID);
-        } else if (status){
-            result = await pool.request()
-                .input("orderStatus", sql.VarChar, status
-                .query(retrieveOrders)
-                )
         } else {
-            // If no orderID, fetch all orders
-            result = await pool.request().query(retrieveOrders);
+            // Fetch orders based on status or use 'active' as default
+            result = await pool.request()
+                .input("orderStatus", sql.VarChar, status || 'active')
+                .query(retrieveOrders);
         }
+
         return res.status(200).json({ message: "Orders retrieved successfully.", orders: result.recordset });
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ message: "Internal Server Error.", error: error.message });
     }
 });
+
 
 router.post("/documentData", async (req, res) => {
     const { orderNumber } = req.body;

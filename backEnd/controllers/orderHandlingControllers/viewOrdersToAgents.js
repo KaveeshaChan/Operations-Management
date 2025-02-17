@@ -23,7 +23,10 @@ router.get("/", async (req, res) => {
         if (!IsActive) return res.status(403).json({ message: "Agent is not active." });
 
         // Retrieve Orders
-        const ordersQuery = await pool.request().query(retrieveOrders);
+        const ordersQuery = await pool
+            .request()
+            .input("orderStatus", 'active')
+            .query(retrieveOrders);
 
         return res.status(200).json({ message: "Orders retrieved successfully.", orders: ordersQuery.recordset });
     } catch (error) {
@@ -35,13 +38,13 @@ router.get("/", async (req, res) => {
 router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
     try {
         const pool = await poolPromise;
-        const { orderID, status } = req.query; // Get orderID & status from query parameters
+        const { OrderID, status } = req.query; // Get orderID & status from query parameters
 
         let result;
-        if (orderID) {
+        if (OrderID) {
             // Fetch a specific order
             result = await pool.request()
-                .input("OrderID", sql.Int, orderID)
+                .input("OrderID", sql.Int, OrderID)
                 .query(retrieveOrderWithOrderID);
         } else {
             // Fetch orders based on status or use 'active' as default
@@ -60,7 +63,7 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
 
 router.post("/documentData", async (req, res) => {
     const { orderNumber } = req.body;
-    
+    console.log(req.body);    
     if (!orderNumber) {
       return res.status(400).json({ message: "Order Number not provided." });
     }

@@ -6,6 +6,6 @@ const addQuotationRoute = require('../controllers/orderHandlingControllers/addQu
 const router = express.Router();
 
 router.use('/add-new-order', addNewOrderRoute);
-router.use('/add-quoatation', authorizeRoles(['commonUser']), addQuotationRoute);
+router.use('/add-quoatation', authorizeRoles(['coordinator']), addQuotationRoute);
 
 module.exports = router;

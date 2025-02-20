@@ -50,8 +50,8 @@ app.use('/api', emailRoute)
 app.use('/api/add-freight-agent', authorizeRoles(['admin', 'mainUser']), addFreightAgentRoute);
 app.use('/api/addFreightAgentCoordinator', authorizeRoles(['admin', 'mainUser']), addFreightAgentCoordinatorRoute);
 app.use('/api/add-main-user', authorizeRoles(['admin']), addMainUserRoute);
-app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser', 'commonUser']), orderHandlingRoute);
-app.use('/api/select', authorizeRoles(['admin', 'mainUser', 'commonUser']), selectRoute)
+app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser', 'freightAgent', 'coordinator']), orderHandlingRoute);
+app.use('/api/select', authorizeRoles(['admin', 'mainUser', 'freightAgent', 'coordinator']), selectRoute)
 app.use('/api/update', authorizeRoles(['admin', 'mainUser']), updateRoutes)
 
 // Schedule the cleanup job to run at midnight every day

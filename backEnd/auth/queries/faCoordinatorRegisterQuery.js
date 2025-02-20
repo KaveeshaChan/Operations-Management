@@ -39,7 +39,7 @@ BEGIN TRY
         @Email,
         @PasswordHash,
         @Freight_Agent, -- Use the mapped AgentID
-        3 -- Assuming RoleID for Freight Agent Coordinators
+        4 -- Assuming RoleID for Freight Agent Coordinators
     );
 
     -- Commit the transaction if all is successful

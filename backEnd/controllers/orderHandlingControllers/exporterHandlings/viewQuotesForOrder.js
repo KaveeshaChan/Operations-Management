@@ -5,7 +5,7 @@ const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
 
 router.get("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
-    const { orderNumber } = req.user;
+    const { orderNumber } = req.query;
     if (!orderNumber) return res.status(400).json({ message: "Order Number not provided." });
 
     try {

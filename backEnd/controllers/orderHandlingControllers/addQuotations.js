@@ -6,7 +6,7 @@ const { addImportAirFreight, addImportLCL, addImportFCL } = require('./queries/q
 const router = express.Router();
 
 //export
-router.post("/export-airFreight", async (req, res) => {
+router.post("/export-airFreight",async (req, res) => {
   try {
     const pool = await poolPromise;
 
@@ -77,7 +77,7 @@ router.post("/export-airFreight", async (req, res) => {
   }
 });
 
-router.post('/export-lcl', async (req, res) => {
+router.post('/export-lcl',async (req, res) => {
   try {
     const pool = await poolPromise; // Get database connection
 
@@ -140,7 +140,7 @@ router.post('/export-lcl', async (req, res) => {
   }
 });
 
-router.post('/export-fcl', async (req, res) => {
+router.post('/export-fcl',async (req, res) => {
   try {
     const pool = await poolPromise; // Get database connection
 
@@ -198,7 +198,7 @@ router.post('/export-fcl', async (req, res) => {
 });
 
 //import
-router.post("/import-airFreight", async (req, res) => {
+router.post("/import-airFreight",async (req, res) => {
   try {
     const pool = await poolPromise;
 
@@ -267,7 +267,7 @@ router.post("/import-airFreight", async (req, res) => {
   }
 });
 
-router.post('/import-lcl', async (req, res) => {
+router.post('/import-lcl',async (req, res) => {
   try {
     const pool = await poolPromise; // Get database connection
 
@@ -332,7 +332,7 @@ router.post('/import-lcl', async (req, res) => {
   }
 });
 
-router.post('/import-fcl', async (req, res) => {
+router.post('/import-fcl',async (req, res) => {
   try {
     const pool = await poolPromise; // Get database connection
 

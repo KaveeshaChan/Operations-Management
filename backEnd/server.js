@@ -14,6 +14,7 @@ const addMainUserRoute = require('./controllers/addingUsers/addMainUserControlle
 const orderHandlingRoute = require('./routes/orderRoutes');
 const selectRoute = require('./routes/selectRoutes');
 const updateRoutes = require('./routes/updateRoutes');
+const emailRoute = require('./controllers/emailHandlingControllers/emailController')
 
 // Load environment variables
 dotenv.config();
@@ -45,6 +46,7 @@ app.use(
 // Routes
 app.use('/api', registerRoute);
 app.use('/api', loginAndLogoutRoute);
+app.use('/api', emailRoute)
 app.use('/api/add-freight-agent', authorizeRoles(['admin', 'mainUser']), addFreightAgentRoute);
 app.use('/api/addFreightAgentCoordinator', authorizeRoles(['admin', 'mainUser']), addFreightAgentCoordinatorRoute);
 app.use('/api/add-main-user', authorizeRoles(['admin']), addMainUserRoute);

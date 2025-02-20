@@ -1,5 +1,5 @@
 const express = require("express");
-const { sql, poolPromise } = require("../../config/database");
+const { sql, poolPromise } = require("../../../config/database");
 const { viewQuotationForOrder } = require('../queries/quotationQueries/viewQuotationsQuery');
 const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();

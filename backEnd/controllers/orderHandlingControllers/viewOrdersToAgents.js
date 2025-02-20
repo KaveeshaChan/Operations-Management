@@ -60,10 +60,8 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
     }
 });
 
-
 router.post("/documentData", async (req, res) => {
-    const { orderNumber } = req.body;
-    console.log(req.body);    
+    const { orderNumber } = req.body;   
     if (!orderNumber) {
       return res.status(400).json({ message: "Order Number not provided." });
     }

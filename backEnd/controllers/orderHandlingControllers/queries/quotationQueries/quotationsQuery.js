@@ -34,6 +34,20 @@ LEFT JOIN [FreightAgentAlloc_App].[dbo].[FA_Coordinators] fc
 WHERE oq.[orderNumber] = @orderNumber;
 `;
 
+const selectQuoteForOrder = `
+    BEGIN TRANSACTION;
+    
+    INSERT INTO [FreightAgentAlloc_App].[dbo].[orderSelectedForwarders] (orderNumber, OrderQuoteID)
+    VALUES (@orderNumber, @OrderQuoteID);
+    
+    UPDATE [FreightAgentAlloc_App].[dbo].[OrderDocs]
+    SET orderStatus = 'completed'
+    WHERE orderNumber = @orderNumber;
+    
+    COMMIT TRANSACTION;
+`;
+
 module.exports = {
-    viewQuotationForOrder
+    viewQuotationForOrder,
+    selectQuoteForOrder
 };

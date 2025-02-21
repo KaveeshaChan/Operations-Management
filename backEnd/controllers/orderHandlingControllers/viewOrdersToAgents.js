@@ -1,6 +1,6 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../config/database");
-const { fetchAgentID, retrieveOrders, fetchDocumentData, retrieveOrderWithOrderID } = require('./queries/viewOrdersToAgentsQuery');
+const { fetchAgentID, retrieveOrders, fetchDocumentData, retrieveOrderWithOrderID, retrieveCompletedOrders } = require('./queries/viewOrdersToAgentsQuery');
 const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -42,15 +42,27 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
 
         let result;
         if (OrderID) {
-            // Fetch a specific order
-            result = await pool.request()
-                .input("OrderID", sql.Int, OrderID)
-                .query(retrieveOrderWithOrderID);
+
+          // Fetch a specific order
+          result = await pool.request()
+            .input("OrderID", sql.Int, OrderID)
+            .query(retrieveOrderWithOrderID);
+
         } else {
+
+          if (status == 'completed'){
+
             // Fetch orders based on status or use 'active' as default
             result = await pool.request()
-                .input("orderStatus", sql.VarChar, status || 'active')
-                .query(retrieveOrders);
+            .input("orderStatus", sql.VarChar, status || 'completed')
+            .query(retrieveCompletedOrders);
+
+          } else {
+            // Fetch orders based on status or use 'active' as default
+            result = await pool.request()
+            .input("orderStatus", sql.VarChar, status || 'active')
+            .query(retrieveOrders);
+          }
         }
 
         return res.status(200).json({ message: "Orders retrieved successfully.", orders: result.recordset });

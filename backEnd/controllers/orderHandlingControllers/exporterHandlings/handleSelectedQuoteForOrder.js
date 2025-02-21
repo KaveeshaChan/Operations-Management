@@ -1,23 +1,24 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../../config/database");
-const { viewQuotationForOrder } = require('../queries/quotationQueries/quotationsQuery');
+const { selectQuoteForOrder } = require('../queries/quotationQueries/quotationsQuery');
 const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
 
-router.get("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
-    const { orderNumber } = req.query;
-    if (!orderNumber) return res.status(400).json({ message: "Order Number not provided." });
+router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+    const { orderNumber, OrderQuoteID } = req.body;
+    if (!orderNumber || !OrderQuoteID) return res.status(400).json({ message: "Order Number or quotationID not provided." });
 
     try {
         const pool = await poolPromise;
 
         // Retrieve Orders
-        const quotesQuery = await pool
+        await pool
             .request()
             .input("orderNumber", sql.VarChar, orderNumber)
-            .query(viewQuotationForOrder);
+            .input("OrderQuoteID", sql.Int,OrderQuoteID)
+            .query(selectQuoteForOrder);
 
-        return res.status(200).json({ message: "Quotes retrieved successfully.", quotes: quotesQuery.recordset });
+        return res.status(200).json({ message: "Freight Forwarder selected & order is completed." });
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ message: "Internal Server Error.", error: error.message });

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.put("/status", async (req, res) => {
     try {
-        const { AgentID, AgentStatus } = req.user;
+        const { AgentID, AgentStatus } = req.body;
 
         if (!AgentID || !AgentStatus) {
             return res.status(400).json({ message: "AgentID and AgentStatus are required." });

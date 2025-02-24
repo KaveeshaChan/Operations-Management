@@ -16,6 +16,8 @@ const selectRoute = require('./routes/selectRoutes');
 const updateRoutes = require('./routes/updateRoutes');
 const emailRoute = require('./controllers/emailHandlingControllers/emailController')
 
+require("./controllers/orderHandlingControllers/exporterHandlings/updateOrderStatusAuto");
+
 // Load environment variables
 dotenv.config();
 

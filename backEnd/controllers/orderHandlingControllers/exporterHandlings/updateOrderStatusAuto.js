@@ -6,15 +6,14 @@ const updateOrderStatus = async () => {
   try {
     const pool = await poolPromise;
     await pool.request().execute("UpdateOrderStatus");
-    console.log("Order status updated automatically.");
+    console.log("Daily order status updated.");
   } catch (error) {
     console.error("Error updating order status:", error.message);
   }
 };
 
 // Schedule it to run every day at midnight
-cron.schedule("0 0 * * *", () => {
-  console.log("Running daily order status update...");
+cron.schedule("0 8 * * *", () => {
   updateOrderStatus();
 });
 

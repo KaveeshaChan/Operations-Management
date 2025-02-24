@@ -108,7 +108,7 @@ SELECT
     od.shipmentReadyDate, 
     od.deliveryTerm, 
     od.cargoType, 
-    od.Type, 
+    od.[Type], 
     od.numberOfPallets, 
     od.numberOfContainers, 
     od.LWHWithThePallet, 
@@ -132,6 +132,7 @@ SELECT
 
     -- Order_Quotations details
     oq.AgentID,
+    fa.Freight_Agent,
     oq.[netFreight],
     oq.[DTHC],
     oq.[netFreightPerContainer],
@@ -157,6 +158,9 @@ LEFT JOIN FreightAgentAlloc_App.dbo.orderSelectedForwarders osf
 LEFT JOIN FreightAgentAlloc_App.dbo.Order_Quotations oq
     ON osf.OrderQuoteID = oq.OrderQuoteID  -- Get details from Order_Quotations
 
+LEFT JOIN FreightAgentAlloc_App.dbo.Freight_Agents fa
+    ON oq.AgentID = fa.AgentID --Get details Freight_Agents
+
 WHERE od.orderStatus = @orderStatus
 GROUP BY 
     od.OrderID, od.orderType, od.shipmentType, od.orderNumber, od.[from], od.[to], 
@@ -168,7 +172,7 @@ GROUP BY
     oq.[DTHC], oq.[netFreightPerContainer],	oq.[freeTime], oq.[transShipmentPort],
 	oq.[carrier], oq.[transitTime], oq.[vesselOrFlightDetails], oq.[totalFreight],
     oq.[validityTime], oq.[airLine], oq.[AWB], oq.[HAWB], oq.[airFreightCost],
-    oq.[DOFee], oq.[quotationCreatedDate], oq.[createdBy];
+    oq.[DOFee], oq.[quotationCreatedDate], oq.[createdBy],fa.Freight_Agent;
 
 `;
 

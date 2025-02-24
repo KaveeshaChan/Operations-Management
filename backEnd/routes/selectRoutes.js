@@ -7,7 +7,7 @@ const viewQuotesForOrder = require('../controllers/orderHandlingControllers/expo
 const router = express.Router();
 
 router.use('/view-freight-agents', viewFreightAgentsRoute);
-router.use('/view-orders', viewOrdersToAgents)
-router.use('/view-quotes', viewQuotesForOrder)
+router.use('/view-orders', viewOrdersToAgents);
+router.use('/view-quotes', viewQuotesForOrder);
 
 module.exports = router;

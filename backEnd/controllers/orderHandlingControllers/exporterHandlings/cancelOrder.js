@@ -1,13 +1,14 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../../config/database");
-const { updateOrderStatus } = require('../queries/updateOrderStatusQuery');
+const { addToCancelOrder } = require('../queries/updateOrderStatusQuery');
 const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
 
 router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
-    const { OrderID, status, reason } = req.body;
+    const { OrderID, orderStatus, reason } = req.body;
+    const cancelledBy = req.user.userId;
     
-    if (!OrderID || !status || !reason) {
+    if (!OrderID || !orderStatus || !reason) {
       return res.status(400).json({ message: "Order Number, status or reason is not provided." });
     }
   
@@ -18,10 +19,12 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
       await pool
         .request()
         .input("OrderID", sql.Int, OrderID)
-        .input("orderStatus", sql.VarChar, status)
-        .query(updateOrderStatus);
+        .input("orderStatus", sql.NVarChar, orderStatus)
+        .input("cancelledReason", sql.VarChar, reason)
+        .input("cancelledBy", sql.VarChar, String(cancelledBy))
+        .query(addToCancelOrder);
 
-      res.status(200).json({message: "Order status updated successfully.",});
+      res.status(200).json({message: "Order cancelled successfully.",});
   
     } catch (error) {
       console.error("Database error:", error);

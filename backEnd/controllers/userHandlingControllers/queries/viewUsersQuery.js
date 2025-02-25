@@ -40,7 +40,16 @@ const selectFreightCoordinators = `
         WHERE Freight_Agent = @AgentID
         `;
 
+const selectMainUsers = `
+        SELECT [MainUserID]
+      ,[MainUserName]
+      ,[Email]
+      ,[ContactNumber]
+  FROM [FreightAgentAlloc_App].[dbo].[Main_Users]
+        `;
+
 module.exports = {
     selectAllFreightAgents,
-    selectFreightCoordinators
+    selectFreightCoordinators,
+    selectMainUsers
 };

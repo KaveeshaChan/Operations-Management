@@ -1,6 +1,6 @@
 const express = require('express');
 const { sql, poolPromise } = require('../../config/database');
-const { selectAllFreightAgents, selectFreightCoordinators } = require('./queries/viewUsersQuery');
+const { selectMainUsers } = require('./queries/viewUsersQuery');
 
 const router = express.Router();
 
@@ -11,12 +11,12 @@ router.get("/", async (req, res) => {
         // Execute the query
         const result = await pool
             .request()
-            .query(selectAllFreightAgents);
+            .query(selectMainUsers);
 
-        res.status(200).json({ freightAgents: result.recordset });
+        res.status(200).json({ mainUsers: result.recordset });
     } catch (err) {
         console.error("Error:", err.message);
-        res.status(500).json({ message: "Failed to fetch freight agents. Internal Server Error." });
+        res.status(500).json({ message: "Failed to fetch main users. Internal Server Error." });
     }
 });
 

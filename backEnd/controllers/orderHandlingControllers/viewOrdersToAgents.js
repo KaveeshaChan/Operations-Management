@@ -1,6 +1,12 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../config/database");
-const { fetchAgentID, retrieveOrders, fetchDocumentData, retrieveOrderWithOrderID, retrieveCompletedOrders } = require('./queries/viewOrdersToAgentsQuery');
+const { fetchAgentID, 
+        retrieveOrders, 
+        fetchDocumentData, 
+        retrieveOrderWithOrderID, 
+        retrieveCompletedOrders, 
+        retrieveInPtogressOrders,
+        retrieveCancelledOrders } = require('./queries/viewOrdersToAgentsQuery');
 const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -26,7 +32,8 @@ router.get("/", async (req, res) => {
         const ordersQuery = await pool
             .request()
             .input("orderStatus", 'active')
-            .query(retrieveOrders);
+            .input("AgentID", AgentID)
+            .query(retrieveInPtogressOrders);
 
         return res.status(200).json({ message: "Orders retrieved successfully.", orders: ordersQuery.recordset });
     } catch (error) {
@@ -57,7 +64,12 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
             .input("orderStatus", sql.VarChar, status || 'completed')
             .query(retrieveCompletedOrders);
 
-          } else {
+          } else if (status == 'cancelled'){
+            // Fetch orders based on status or use 'active' as default
+            result = await pool.request()
+            .input("orderStatus", sql.VarChar, status || 'active')
+            .query(retrieveCancelledOrders);
+          }else {
             // Fetch orders based on status or use 'active' as default
             result = await pool.request()
             .input("orderStatus", sql.VarChar, status || 'active')

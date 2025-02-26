@@ -1,11 +1,14 @@
+const express = require("express");
 const nodemailer = require("nodemailer");
 
-// Configure the transporter (use your own email service credentials)
+const router = express.Router();
+
+// Configure the transporter
 const transporter = nodemailer.createTransport({
-    service: "gmail", // Use "hotmail", "yahoo", etc., if using other services
+    service: "gmail",
     auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // App password or SMTP password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
 });
 
@@ -14,7 +17,6 @@ const sendEmail = async (req, res) => {
     const { to, subject, text } = req.body;
 
     try {
-        // Email options
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to,
@@ -22,7 +24,6 @@ const sendEmail = async (req, res) => {
             text,
         };
 
-        // Send email
         await transporter.sendMail(mailOptions);
         res.status(200).json({ message: "Email sent successfully" });
     } catch (error) {
@@ -31,4 +32,7 @@ const sendEmail = async (req, res) => {
     }
 };
 
-module.exports = { sendEmail };
+// Attach the function to a route
+router.post("/send-email", sendEmail);
+
+module.exports = router; // Export the router

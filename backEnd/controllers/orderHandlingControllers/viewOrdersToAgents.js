@@ -6,11 +6,12 @@ const { fetchAgentID,
         retrieveOrderWithOrderID, 
         retrieveCompletedOrders, 
         retrieveInPtogressOrders,
-        retrieveCancelledOrders } = require('./queries/viewOrdersToAgentsQuery');
+        retrieveCancelledOrders,
+        retrieveCompletedOrdersForAgent } = require('./queries/viewOrdersToAgentsQuery');
 const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", authorizeRoles(['freightAgent', 'coordinator']), async (req, res) => {
     const { userId } = req.user;
     if (!userId) return res.status(400).json({ message: "User ID not provided." });
 
@@ -84,7 +85,7 @@ router.get("/exporter", authorizeRoles(['admin', 'mainUser']), async (req, res) 
     }
 });
 
-router.post("/documentData", async (req, res) => {
+router.post("/documentData", authorizeRoles(['admin', 'mainUser', 'freightAgent', 'coordinator']), async (req, res) => {
     const { orderNumber } = req.body;   
     if (!orderNumber) {
       return res.status(400).json({ message: "Order Number not provided." });
@@ -122,6 +123,28 @@ router.post("/documentData", async (req, res) => {
       console.error("Database error:", error);
       return res.status(500).json({ message: "Internal Server Error.", error: error.message });
     }
+});
+
+router.get("/completed", authorizeRoles(['freightAgent', 'coordinator']), async (req, res) => {
+
+  const { agentID } = req.user
+  if (!agentID) {
+    return res.status(400).json({ message: "Couldn't get the agent ID." });
+  }
+
+  try {
+    const pool = await poolPromise;
+
+    await pool
+      .request()
+      .input("AgentID", sql.VarChar, agentID)
+      .query(retrieveCompletedOrdersForAgent)
+
+      return res.status(200).json({ message: "Orders retrieved successfully.", orders: result.recordset });
+  } catch (error) {
+      console.error("Database error:", error);
+      return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+  }
 });
   
 module.exports = router;

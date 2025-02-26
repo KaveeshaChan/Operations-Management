@@ -6,7 +6,7 @@ const selectBestQuote = require('../controllers/orderHandlingControllers/exporte
 
 const router = express.Router();
 
-router.use('/add-new-order', addNewOrderRoute);
+router.use('/add-new-order', authorizeRoles(['admin', 'mainUser']), addNewOrderRoute);
 router.use('/add-quoatation', authorizeRoles(['coordinator']), addQuotationRoute);
 router.use('/select-best-quote', authorizeRoles(['admin', 'mainUser']), selectBestQuote)
 

@@ -2,12 +2,11 @@ const express = require('express');
 const { sql, poolPromise } = require('../../config/database');
 const { addExportAirFreight, addExportLCL, addExportFCL } = require('./queries/addNewOrderQueries/addNewOrderExportQueries');
 const { addImportAirFreight, addImportLCL, addImportFCL } = require('./queries/addNewOrderQueries/addNewOrderImportQueries');
-const { authorizeRoles } = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
 
 //export
-router.post("/export-airFreight", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post("/export-airFreight", async (req, res) => {
   
   const {
     orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate,
@@ -72,7 +71,7 @@ router.post("/export-airFreight", authorizeRoles(['admin', 'mainUser']), async (
   }
 });
 
-router.post('/export-lcl', authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post('/export-lcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
     numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, additionalNotes, fileUpload, fileName, userId, dueDate } = req.body;
 
@@ -129,7 +128,7 @@ router.post('/export-lcl', authorizeRoles(['admin', 'mainUser']), async (req, re
   }
 });
 
-router.post('/export-fcl', authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post('/export-fcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
     numberOfContainers, targetDate, fileUpload, fileName, additionalNotes, userId, dueDate } = req.body;
 
@@ -186,7 +185,7 @@ router.post('/export-fcl', authorizeRoles(['admin', 'mainUser']), async (req, re
 });
 
 //import
-router.post('/import-airFreight', authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post('/import-airFreight', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, cargoType, 
     numberOfPallets, chargeableWeight, grossWeight, cargoCBM, LWHWithThePallet, productDescription, targetDate, additionalNotes,
     fileUpload, fileName, userId, dueDate } = req.body;
@@ -248,7 +247,7 @@ router.post('/import-airFreight', authorizeRoles(['admin', 'mainUser']), async (
   }
 });
 
-router.post('/import-lcl', authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post('/import-lcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
     numberOfPallets, palletCBM, cargoCBM, grossWeight, targetDate, productDescription, additionalNotes, fileUpload, fileName, userId, dueDate } = req.body;
 
@@ -306,7 +305,7 @@ router.post('/import-lcl', authorizeRoles(['admin', 'mainUser']), async (req, re
   }
 });
 
-router.post('/import-fcl', authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+router.post('/import-fcl', async (req, res) => {
   const { orderType, shipmentType, orderNumber, routeFrom, routeTo, shipmentReadyDate, deliveryTerm, type, 
     targetDate, numberOfContainers, productDescription, additionalNotes, fileUpload, fileName, userId, dueDate } = req.body;
 

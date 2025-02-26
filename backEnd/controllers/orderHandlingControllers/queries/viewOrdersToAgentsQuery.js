@@ -340,6 +340,57 @@ const fetchDocumentData = `
             WHERE orderNumber = @orderNumber
 `;
 
+const retrieveCompletedOrdersForAgent = `
+SELECT	osf.orderNumber,
+		osf.OrderQuoteID,
+		oq.netFreight,
+		oq.DTHC,
+		oq.netFreightPerContainer,
+		oq.freeTime,
+		oq.transShipmentPort,
+		oq.carrier,
+		oq.transitTime,
+		oq.vesselOrFlightDetails,
+		oq.totalFreight,
+		oq.validityTime,
+		oq.airLine,
+		oq.AWB,
+		oq.HAWB,
+		oq.airFreightCost,
+		oq.DOFee,
+		oq.quotationCreatedDate,
+		od.orderType,
+		od.shipmentType, 
+		od.orderNumber, 
+		od.[from], 
+		od.[to], 
+		od.shipmentReadyDate, 
+		od.deliveryTerm, 
+		od.cargoType, 
+		od.[Type], 
+		od.numberOfPallets, 
+		od.numberOfContainers, 
+		od.LWHWithThePallet, 
+		od.palletCBM, 
+		od.cargoCBM, 
+		od.grossWeight, 
+		od.chargeableWeight, 
+		od.targetDate, 
+		od.additionalNotes, 
+		od.productDescription, 
+		od.orderCreatedDate,
+		od.orderStatus, 
+		od.createdBy
+FROM [FreightAgentAlloc_App].[dbo].[orderSelectedForwarders] osf
+JOIN [FreightAgentAlloc_App].[dbo].[Order_Quotations] oq
+    ON osf.OrderQuoteID = oq.OrderQuoteID
+
+LEFT JOIN FreightAgentAlloc_App.dbo.OrderDocs od
+	ON od.orderNumber = osf.orderNumber
+
+WHERE oq.AgentID = @AgentID;
+`;
+
 module.exports = {
     fetchAgentID,
     retrieveOrders,
@@ -347,5 +398,6 @@ module.exports = {
     retrieveOrderWithOrderID,
     retrieveCompletedOrders,
     retrieveInPtogressOrders,
-    retrieveCancelledOrders
+    retrieveCancelledOrders,
+    retrieveCompletedOrdersForAgent
 };

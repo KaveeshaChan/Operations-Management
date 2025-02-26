@@ -1,10 +1,11 @@
 const express = require('express');
 const { sql, poolPromise } = require('../../config/database');
 const { selectAllFreightAgents, selectFreightCoordinators } = require('./queries/viewUsersQuery');
+const { authorizeRoles } = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", authorizeRoles(['admin','commonUser']), async (req, res) => {
     try {
         const pool = await poolPromise;
 

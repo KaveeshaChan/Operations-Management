@@ -30,17 +30,3 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
 });
 
 module.exports = router;
-
-// const { poolPromise } = require("../../../config/database");
-
-// const updateOrderStatus = async () => {
-//   try {
-//     const pool = await poolPromise;
-//     await pool.request().execute("UpdateOrderStatus");
-//     console.log("Order status updated automatically.");
-//   } catch (error) {
-//     console.error("Error updating order status:", error.message);
-//   }
-// };
-
-// module.exports = updateOrderStatus;

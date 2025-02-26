@@ -13,7 +13,7 @@ const updateOrderStatus = async () => {
 };
 
 // Schedule it to run every day at midnight
-cron.schedule("0 8 * * *", () => {
+cron.schedule("30 8 * * *", () => {
   updateOrderStatus();
 });
 

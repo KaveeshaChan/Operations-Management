@@ -1,10 +1,11 @@
 const express = require('express');
 const { sql, poolPromise } = require('../../config/database');
 const { updateFreigtAgentStatus } = require('./queries/updateFreightAgentsQuery');
+const { authorizeRoles } = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
 
-router.put("/status", async (req, res) => {
+router.put("/status", authorizeRoles(['admin']), async (req, res) => {
     try {
         const { AgentID, AgentStatus } = req.body;
 

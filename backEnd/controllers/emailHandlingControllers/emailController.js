@@ -12,9 +12,13 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Function to send email
-const sendEmail = async (req, res) => {
-    const { to, subject, text } = req.body;
+//new order mail
+router.post("/", async (req, res) => {
+    const { to, subject, text } = req.body
+
+    if ( !to || !subject || !text ){
+        return res.status(400).json({ Message: "Receiver mail, subject or text is missing."});
+    }
 
     try {
         const mailOptions = {
@@ -30,9 +34,29 @@ const sendEmail = async (req, res) => {
         console.error("Error sending email:", error);
         res.status(500).json({ error: "Failed to send email" });
     }
-};
+})
 
-// Attach the function to a route
-router.post("/send-email", sendEmail);
+// // Function to send email
+// const sendEmail = async (req, res) => {
+//     const { to, subject, text } = req.body;
+
+//     try {
+//         const mailOptions = {
+//             from: process.env.EMAIL_USER,
+//             to,
+//             subject,
+//             text,
+//         };
+
+//         await transporter.sendMail(mailOptions);
+//         res.status(200).json({ message: "Email sent successfully" });
+//     } catch (error) {
+//         console.error("Error sending email:", error);
+//         res.status(500).json({ error: "Failed to send email" });
+//     }
+// };
+
+// // Attach the function to a route
+// router.post("/send-email", sendEmail);
 
 module.exports = router; // Export the router

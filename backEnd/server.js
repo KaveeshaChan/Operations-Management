@@ -14,7 +14,7 @@ const addMainUserRoute = require('./controllers/addingUsers/addMainUserControlle
 const orderHandlingRoute = require('./routes/orderRoutes');
 const selectRoute = require('./routes/selectRoutes');
 const updateRoutes = require('./routes/updateRoutes');
-const emailRoute = require('./controllers/emailHandlingControllers/emailController')
+const emailRoute = require('./routes/emailRoutes')
 
 require("./controllers/orderHandlingControllers/exporterHandlings/updateOrderStatusAuto");
 

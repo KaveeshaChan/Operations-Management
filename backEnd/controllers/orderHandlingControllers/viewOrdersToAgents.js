@@ -8,6 +8,7 @@ const { fetchAgentID,
         retrieveInPtogressOrders,
         retrieveCancelledOrders,
         retrieveCompletedOrdersForAgent } = require('./queries/viewOrdersToAgentsQuery');
+const { selectPreviousQuotes } = require('./queries/quotationQueries/quotationsQuery');
 const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -127,20 +128,52 @@ router.post("/documentData", authorizeRoles(['admin', 'mainUser', 'freightAgent'
 
 router.get("/completed", authorizeRoles(['freightAgent', 'coordinator']), async (req, res) => {
 
-  const { agentID } = req.user
+  const { agentID, userId } = req.user
   if (!agentID) {
-    return res.status(400).json({ message: "Couldn't get the agent ID." });
+      return res.status(400).json({ message: "Couldn't get the agent ID." });
   }
 
   try {
     const pool = await poolPromise;
 
-    await pool
+    const result = await pool
       .request()
-      .input("AgentID", sql.VarChar, agentID)
+      .input("AgentID", agentID)
       .query(retrieveCompletedOrdersForAgent)
 
       return res.status(200).json({ message: "Orders retrieved successfully.", orders: result.recordset });
+  } catch (error) {
+      console.error("Database error:", error);
+      return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+  }
+});
+
+router.post("/quoted", authorizeRoles(['freightAgent', 'coordinator']), async (req, res) => {
+  const { agentID, userId } = req.user
+  if (!agentID) {
+      return res.status(400).json({ message: "Couldn't get the agent ID." });
+  }
+
+  // Fetch AgentID & Check if Agent is Active
+  const agentCheck = await pool
+    .request()
+    .input("UserID", sql.Int, userId)
+    .query(fetchAgentID);
+
+  const { IsActive } = agentCheck.recordset[0] || {};
+  if (!IsActive) return res.status(403).json({ message: "Agent is not active." });
+
+  try {
+      const pool = await poolPromise;
+
+      // Retrieve Orders
+      await pool
+          .request()
+          .input("AgentID", agentID)
+          .input("orderStatus", 'active')
+          .query(selectPreviousQuotes);
+
+      return res.status(200).json({ message: "Retrived previous quotations." });
   } catch (error) {
       console.error("Database error:", error);
       return res.status(500).json({ message: "Internal Server Error.", error: error.message });

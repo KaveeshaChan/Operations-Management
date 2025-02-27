@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { sql, poolPromise } = require('../config/database');
 
 const authorizeRoles = (allowedRoles) => (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -29,6 +30,7 @@ const authorizeRoles = (allowedRoles) => (req, res, next) => {
 
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Authorization token required.' });
   }

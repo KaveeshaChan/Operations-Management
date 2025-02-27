@@ -1,4 +1,3 @@
-const sql = require("mssql");
 const cron = require("node-cron");
 const { poolPromise } = require("../../../config/database");
 

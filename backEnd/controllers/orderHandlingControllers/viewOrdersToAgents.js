@@ -148,32 +148,32 @@ router.get("/completed", authorizeRoles(['freightAgent', 'coordinator']), async 
   }
 });
 
-router.post("/quoted", authorizeRoles(['freightAgent', 'coordinator']), async (req, res) => {
+router.get("/quoted", authorizeRoles(['freightAgent', 'coordinator']), async (req, res) => {
   const { agentID, userId } = req.user
   if (!agentID) {
       return res.status(400).json({ message: "Couldn't get the agent ID." });
   }
+  const pool = await poolPromise;
 
   // Fetch AgentID & Check if Agent is Active
   const agentCheck = await pool
     .request()
-    .input("UserID", sql.Int, userId)
+    .input("UserID", userId)
     .query(fetchAgentID);
 
   const { IsActive } = agentCheck.recordset[0] || {};
   if (!IsActive) return res.status(403).json({ message: "Agent is not active." });
 
   try {
-      const pool = await poolPromise;
 
       // Retrieve Orders
-      await pool
+      const quoted = await pool
           .request()
           .input("AgentID", agentID)
           .input("orderStatus", 'active')
           .query(selectPreviousQuotes);
 
-      return res.status(200).json({ message: "Retrived previous quotations." });
+      return res.status(200).json({ message: "Retrived previous quotations.", quotedOrders: quoted.recordset });
   } catch (error) {
       console.error("Database error:", error);
       return res.status(500).json({ message: "Internal Server Error.", error: error.message });

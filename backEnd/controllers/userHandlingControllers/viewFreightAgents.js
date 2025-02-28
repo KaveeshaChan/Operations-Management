@@ -51,7 +51,7 @@ router.get("/emails", async (req, res) => {
         // Execute the query
         const result = await pool
             .request()
-            .query("SELECT [AgentID], [Email], [AgentStatus] FROM FreightAgents WHERE AgentID != -99");
+            .query("SELECT [AgentID], [Email], [AgentStatus] FROM [FreightAgentAlloc_App].[dbo].[Freight_Agents] WHERE AgentID != -99");
 
         res.status(200).json({ agents: result.recordset });
     } catch (err) {

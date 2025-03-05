@@ -1,6 +1,7 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../../config/database");
 const { selectQuoteForOrder, selectSelectedOrderDetails } = require('../queries/quotationQueries/quotationsQuery');
+const { retrieveOrderWithOrderNumber } = require('../queries/viewOrdersToAgentsQuery')
 const { generateForwarderSelectedEmail } = require('../../emailHandlingControllers/utils/emailTemps')
 const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
@@ -29,7 +30,7 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
             .input("OrderQuoteID", sql.Int, OrderQuoteID)
             .query(selectQuoteForOrder);
 
-        // Fetch details of selected quote (inside transaction to ensure consistency)
+        // Fetch details of selected quote
         const selectedQuoteResult = await transaction
             .request()
             .input("OrderQuoteID", sql.Int, OrderQuoteID)
@@ -45,7 +46,7 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
         const cleanSelectedQuote = (quote) => {
             const cleanedQuote = {};
             const excludedFields = ['AgentID', 'createdBy', 'Email'];
-            
+                    
             for (let key in quote) {
                 if (quote[key] !== null && !excludedFields.includes(key)) {
                     cleanedQuote[key] = quote[key];
@@ -53,16 +54,44 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
             }
             return cleanedQuote;
         };
-
+        
         const cleanedQuote = cleanSelectedQuote(selectedQuote);
+
+        //fetch details of order
+        const orderDetailsResult = await transaction
+            .request()
+            .input("orderNumber", orderNumber)
+            .query(retrieveOrderWithOrderNumber)
+
+        if (orderDetailsResult.recordset.length === 0) {
+            throw new Error('No matching order details found.');
+        }
+
+        const orderDetails = orderDetailsResult.recordset[0];
+
+        // Function to clean the quote data and remove null values
+        const cleanSelectedOrder = (order) => {
+            const cleanedOrderDetails = {};
+            // const excludedFields = ['AgentID', 'createdBy', 'Email'];
+                    
+            for (let key in order) {
+                if (order[key] !== null) {
+                    cleanedOrderDetails[key] = order[key];
+                }
+            }
+            return cleanedOrderDetails;
+        };
+        
+        const cleanedOrderDetails = cleanSelectedOrder(orderDetails);
 
         // Prepare email payload with the cleaned quote data
         const emailPayload = {
-            to: "thirimadurasandun@gmail.com", // You can replace with `selectedQuote.Email` if needed
-            subject: `Selected for - Order Number(${orderNumber })`,
+            to: "thirimadurasandun@gmail.com",
+            subject: `Basilur Tea Exports selected you for - Order Number(${orderNumber })`,
             html: generateForwarderSelectedEmail({
                 orderNumber,
-                quoteData: cleanedQuote,  // Pass cleaned quote to the email template
+                quoteData: cleanedQuote,
+                orderDetails: cleanedOrderDetails
             }),
         };
 

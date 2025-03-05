@@ -162,20 +162,40 @@ function generatePasswordResetEmail({ resetToken, email }) {
     `;
 }
 
-function generateForwarderSelectedEmail({ orderNumber, quoteData }) {
-    // Dynamically generate the content for the quote data
+function generateForwarderSelectedEmail({ orderNumber, quoteData, orderDetails }) {
+    // Dynamically generate the content for the quote data (already working)
     let quoteContent = '<ul>';
-
-    // Loop through quoteData and add only the non-null fields
     for (let key in quoteData) {
         if (quoteData[key] !== null && quoteData[key] !== undefined) {
             quoteContent += `<li><strong>${key}</strong>: ${quoteData[key]}</li>`;
         }
     }
-
     quoteContent += '</ul>';
 
-    // Returning the email template with dynamically added quote content
+    // Dynamically generate the content for orderDetails as a table
+    let orderDetailsTable = `
+        <table style="width:100%; border-collapse: collapse; margin-top: 15px;">
+
+            <tbody>
+    `;
+
+    for (let key in orderDetails) {
+        if (orderDetails[key] !== null && orderDetails[key] !== undefined) {
+            orderDetailsTable += `
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${key}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${orderDetails[key]}</td>
+                </tr>
+            `;
+        }
+    }
+
+    orderDetailsTable += `
+            </tbody>
+        </table>
+    `;
+
+    // Returning the email template with both sections
     return `
         <!DOCTYPE html>
         <html>
@@ -193,6 +213,11 @@ function generateForwarderSelectedEmail({ orderNumber, quoteData }) {
                     <div style="margin-bottom: 25px;">
                         <p style="margin: 0 0 16px 0;">The selected quote details are as follows:</p>
                         ${quoteContent}
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <p style="margin: 0 0 16px 0;">Order Details:</p>
+                        ${orderDetailsTable}
                     </div>
 
                     <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee; font-size: 0.9em; color: #666666;">

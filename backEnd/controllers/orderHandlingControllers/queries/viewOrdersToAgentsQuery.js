@@ -390,6 +390,32 @@ LEFT JOIN FreightAgentAlloc_App.dbo.OrderDocs od
 WHERE oq.AgentID = @AgentID;
 `;
 
+const retrieveOrderWithOrderNumber = `
+SELECT  
+    orderType, 
+    shipmentType,
+    [from], 
+    [to], 
+    shipmentReadyDate, 
+    deliveryTerm, 
+    cargoType, 
+    Type, 
+    numberOfPallets, 
+    numberOfContainers, 
+    LWHWithThePallet, 
+    palletCBM, 
+    cargoCBM, 
+    grossWeight, 
+    chargeableWeight, 
+    targetDate, 
+    additionalNotes, 
+    productDescription
+
+FROM FreightAgentAlloc_App.dbo.OrderDocs
+
+where orderNumber = @orderNumber
+`;
+
 module.exports = {
     fetchAgentID,
     retrieveOrders,
@@ -398,5 +424,6 @@ module.exports = {
     retrieveCompletedOrders,
     retrieveInPtogressOrders,
     retrieveCancelledOrders,
-    retrieveCompletedOrdersForAgent
+    retrieveCompletedOrdersForAgent,
+    retrieveOrderWithOrderNumber
 };

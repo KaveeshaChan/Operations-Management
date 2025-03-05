@@ -33,13 +33,14 @@ BEGIN TRY
     );
 
     -- Insert into Users table
-    INSERT INTO Users (User_Contact_Number, Email, PasswordHash, AgentID, RoleID)
+    INSERT INTO Users (User_Contact_Number, Email, PasswordHash, AgentID, RoleID, IsInitialLogin)
     VALUES (
         @ContactNumber,
         @Email,
         @PasswordHash,
         @Freight_Agent, -- Use the mapped AgentID
-        4 -- Assuming RoleID for Freight Agent Coordinators
+        4, -- Assuming RoleID for Freight Agent Coordinators
+        1
     );
 
     -- Commit the transaction if all is successful

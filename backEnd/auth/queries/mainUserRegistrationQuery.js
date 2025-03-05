@@ -20,13 +20,14 @@ BEGIN TRY
     );
 
     -- Insert into Users table
-    INSERT INTO Users (User_Contact_Number, Email, PasswordHash, AgentID, RoleID)
+    INSERT INTO Users (User_Contact_Number, Email, PasswordHash, AgentID, RoleID, IsInitialLogin)
     VALUES (
         @ContactNumber,
         @Email,
         @PasswordHash,
         -99,
-        2 -- Assuming role as main user
+        2, -- Assuming role as main user
+        1
     );
 
     -- Commit the transaction if all is successful

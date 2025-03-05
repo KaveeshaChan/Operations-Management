@@ -1,5 +1,6 @@
 const express = require('express');
 const { sql, poolPromise } = require('../../config/database');
+const { generateFreightRequestEmail } = require('../emailHandlingControllers/utils/emailTemps');
 const { addExportAirFreight, addExportLCL, addExportFCL } = require('./queries/addNewOrderQueries/addNewOrderExportQueries');
 const { addImportAirFreight, addImportLCL, addImportFCL } = require('./queries/addNewOrderQueries/addNewOrderImportQueries');
 
@@ -90,7 +91,14 @@ router.post("/export-airFreight", async (req, res) => {
       // to: activeAgentEmails,
       to: "thirimadurasandun@gmail.com",
       subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
-      text: `A new order has been created.\n\nOrder Number: ${orderNumber}\nRoute: ${routeFrom} to ${routeTo}\nShipment Type: ${shipmentType}\n\nPlease check the system for full details.`,
+      html: generateFreightRequestEmail({
+        orderNumber,
+        routeFrom,
+        routeTo,
+        shipmentType,
+        shipmentReadyDate,
+        targetDate
+    }),
     };
 
     // Send email
@@ -192,13 +200,20 @@ router.post('/export-lcl', async (req, res) => {
       const agentEmailsData = await agentEmailsResult.json();
       const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
-      // Prepare email payload
-      const emailPayload = {
-        // to: activeAgentEmails,
-        to: "thirimadurasandun@gmail.com",
-        subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
-        text: `A new order has been created.\n\nOrder Number: ${orderNumber}\nRoute: ${routeFrom} to ${routeTo}\nShipment Type: ${shipmentType}\n\nPlease check the system for full details.`,
-      };
+    // Prepare email payload
+    const emailPayload = {
+      // to: activeAgentEmails,
+      to: "thirimadurasandun@gmail.com",
+      subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
+      html: generateFreightRequestEmail({
+        orderNumber,
+        routeFrom,
+        routeTo,
+        shipmentType,
+        shipmentReadyDate,
+        targetDate
+    }),
+    };
 
       // Send email
       const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
@@ -298,13 +313,20 @@ router.post('/export-fcl', async (req, res) => {
       const agentEmailsData = await agentEmailsResult.json();
       const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
       
-      // Prepare email payload
-      const emailPayload = {
-          // to: activeAgentEmails,
-          to: "thirimadurasandun@gmail.com",
-          subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
-          text: `A new order has been created.\n\nOrder Number: ${orderNumber}\nRoute: ${routeFrom} to ${routeTo}\nShipment Type: ${shipmentType}\n\nPlease check the system for full details.`,
-      };
+    // Prepare email payload
+    const emailPayload = {
+      // to: activeAgentEmails,
+      to: "thirimadurasandun@gmail.com",
+      subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
+      html: generateFreightRequestEmail({
+        orderNumber,
+        routeFrom,
+        routeTo,
+        shipmentType,
+        shipmentReadyDate,
+        targetDate
+    }),
+    };
 
       // Send email (this could call your existing email API)
       const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
@@ -413,13 +435,20 @@ router.post('/import-airFreight', async (req, res) => {
       const agentEmailsData = await agentEmailsResult.json();
       const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
-      // Prepare email payload
-      const emailPayload = {
-        // to: activeAgentEmails,
-        to: "thirimadurasandun@gmail.com",
-        subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
-        text: `A new order has been created.\n\nOrder Number: ${orderNumber}\nRoute: ${routeFrom} to ${routeTo}\nShipment Type: ${shipmentType}\n\nPlease check the system for full details.`,
-      };
+    // Prepare email payload
+    const emailPayload = {
+      // to: activeAgentEmails,
+      to: "thirimadurasandun@gmail.com",
+      subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
+      html: generateFreightRequestEmail({
+        orderNumber,
+        routeFrom,
+        routeTo,
+        shipmentType,
+        shipmentReadyDate,
+        targetDate
+    }),
+    };
 
       // Send email (this could call your existing email API)
       const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
@@ -528,7 +557,14 @@ router.post('/import-lcl', async (req, res) => {
       // to: activeAgentEmails,
       to: "thirimadurasandun@gmail.com",
       subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
-      text: `A new order has been created.\n\nOrder Number: ${orderNumber}\nRoute: ${routeFrom} to ${routeTo}\nShipment Type: ${shipmentType}\n\nPlease check the system for full details.`,
+      html: generateFreightRequestEmail({
+        orderNumber,
+        routeFrom,
+        routeTo,
+        shipmentType,
+        shipmentReadyDate,
+        targetDate
+    }),
     };
 
     // Send email (this could call your existing email API)
@@ -573,7 +609,6 @@ router.post('/import-fcl', async (req, res) => {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
-
   const pool = await poolPromise; // Get database connection
 
   // Check if orderNumber already exists
@@ -590,9 +625,7 @@ router.post('/import-fcl', async (req, res) => {
   const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
   try {
-    // Start a SQL transaction
-    const transaction = pool.transaction();
-    await transaction.begin();
+c
 
     // Insert the new order into the database
     await transaction
@@ -635,7 +668,14 @@ router.post('/import-fcl', async (req, res) => {
       // to: activeAgentEmails,
       to: "thirimadurasandun@gmail.com",
       subject: `Freight Request - Basilur Tea Exports (Pvt) Ltd - Order Number(${orderNumber})`,
-      text: `A new order has been created.\n\nOrder Number: ${orderNumber}\nRoute: ${routeFrom} to ${routeTo}\nShipment Type: ${shipmentType}\n\nPlease check the system for full details.`,
+      html: generateFreightRequestEmail({
+        orderNumber,
+        routeFrom,
+        routeTo,
+        shipmentType,
+        shipmentReadyDate,
+        targetDate
+    }),
     };
 
     // Send email (this could call your existing email API)

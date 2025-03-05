@@ -14,10 +14,10 @@ const transporter = nodemailer.createTransport({
 
 //new order mail
 router.post("/", async (req, res) => {
-    const { to, subject, text } = req.body
+    const { to, subject, text, html } = req.body
 
-    if ( !to || !subject || !text ){
-        return res.status(400).json({ Message: "Receiver mail, subject or text is missing."});
+    if ( !to || !subject ){
+        return res.status(400).json({ Message: "Receiver mail, subject is missing."});
     }
 
     try {
@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
             from: process.env.EMAIL_USER,
             to,
             subject,
-            text,
+            html,
         };
 
         await transporter.sendMail(mailOptions);

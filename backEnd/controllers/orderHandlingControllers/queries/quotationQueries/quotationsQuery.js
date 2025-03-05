@@ -101,8 +101,34 @@ JOIN [FreightAgentAlloc_App].[dbo].[OrderDocs] od
 WHERE oq.AgentID = @AgentID and od.orderStatus = @orderStatus;
 `;
 
+const selectSelectedOrderDetails = `
+                SELECT oq.netFreight
+	                ,oq.AgentID
+                    ,oq.DTHC
+                    ,oq.netFreightPerContainer
+                    ,oq.freeTime
+                    ,oq.transShipmentPort
+                    ,oq.carrier
+                    ,oq.transitTime
+                    ,oq.vesselOrFlightDetails
+                    ,oq.totalFreight
+                    ,oq.validityTime
+                    ,oq.airLine
+                    ,oq.AWB
+                    ,oq.HAWB
+                    ,oq.airFreightCost
+                    ,oq.DOFee
+	                ,oq.createdBy
+	                ,fa.Email
+                FROM [FreightAgentAlloc_App].[dbo].[Order_Quotations] oq
+                    JOIN [FreightAgentAlloc_App].[dbo].[Freight_Agents] fa
+	                    ON oq.AgentID = fa.AgentID
+                WHERE OrderQuoteID = @OrderQuoteID
+                `;
+
 module.exports = {
     viewQuotationForOrder,
     selectQuoteForOrder,
-    selectPreviousQuotes
+    selectPreviousQuotes,
+    selectSelectedOrderDetails
 };

@@ -10,6 +10,10 @@ SET orderStatus = @orderStatus,
     cancelledReason = @cancelledReason,
     cancelledBy = @cancelledBy
 WHERE OrderID = @OrderID;
+
+SELECT @OrderNumber = orderNumber
+FROM OrderDocs
+WHERE OrderID = @OrderID;
 `;
 
 module.exports = {

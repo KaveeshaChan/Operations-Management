@@ -41,13 +41,14 @@ BEGIN TRY
     DECLARE @AgentID INT = SCOPE_IDENTITY();
 
     -- Insert into Users table
-    INSERT INTO Users (User_Contact_Number, Email, PasswordHash, AgentID, RoleID)
+    INSERT INTO Users (User_Contact_Number, Email, PasswordHash, AgentID, RoleID, IsInitialLogin)
     VALUES (
         @ContactNumber,
         @Email,
         @PasswordHash,
         @AgentID,
-        3 -- Assuming RoleID for Freight Agents as a common user
+        3, -- Assuming RoleID for Freight Agents as a common user
+        1
     );
 
     -- Commit the transaction if all is successful

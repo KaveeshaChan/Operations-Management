@@ -4,6 +4,7 @@ const multer = require('multer');
 const dotenv = require('dotenv');
 const { authorizeRoles } = require('./middlewares/authMiddleware');
 const cron = require('node-cron');
+const path = require('path');
 
 // Route imports
 const registerRoute = require('./auth/register');
@@ -26,6 +27,9 @@ const PORT = process.env.PORT || 5056;
 
 // Database connection
 require('./config/database'); // Ensure DB connection is established
+
+// Serve static images from 'src/images/logo'
+app.use('/images/logo', express.static(path.join(__dirname, 'src/images/logo')));
 
 // Middleware
 app.use(express.urlencoded({ extended: true, limit: '50mb'  })); // Parse URL-encoded bodies

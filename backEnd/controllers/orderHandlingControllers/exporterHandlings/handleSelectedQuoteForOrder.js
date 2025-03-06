@@ -86,8 +86,8 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
 
         // Prepare email payload with the cleaned quote data
         const emailPayload = {
-            to: "thirimadurasandun@gmail.com",
-            subject: `Basilur Tea Exports selected you for - Order Number(${orderNumber })`,
+            to: "thirimadurasandun@gmail.com, kaveeshachan@gmail.com",
+            subject: `Basilur Tea Exports (Pvt) Ltd. selected you for - Order Number(${orderNumber })`,
             html: generateForwarderSelectedEmail({
                 orderNumber,
                 quoteData: cleanedQuote,

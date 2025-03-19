@@ -45,7 +45,7 @@ SELECT
 
 FROM FreightAgentAlloc_App.dbo.OrderDocs od
 LEFT JOIN FreightAgentAlloc_App.dbo.Order_Quotations q 
-    ON od.orderNumber = q.orderNumber  -- Assuming orderNumber is the link between the tables
+    ON od.orderNumber = q.orderNumber
 
 WHERE od.orderStatus = @orderStatus
 GROUP BY 
@@ -107,7 +107,7 @@ SELECT
 
 FROM FreightAgentAlloc_App.dbo.OrderDocs od
 LEFT JOIN FreightAgentAlloc_App.dbo.Order_Quotations q 
-    ON od.orderNumber = q.orderNumber  -- Assuming orderNumber is the link between the tables
+    ON od.orderNumber = q.orderNumber
 
 WHERE od.orderStatus = @orderStatus
 GROUP BY 
@@ -416,6 +416,21 @@ FROM FreightAgentAlloc_App.dbo.OrderDocs
 where orderNumber = @orderNumber
 `;
 
+const orderCounts = `  
+    SELECT COUNT (OrderID) as allOrders,
+        COUNT (CASE WHEN orderStatus = 'active' THEN 1 END) AS allActiveOrders,
+        COUNT (CASE WHEN orderStatus = 'pending' THEN 1 END) AS allPendingOrders,
+        COUNT (CASE WHEN orderStatus = 'completed' THEN 1 END) AS allCompletedOrders,
+        COUNT (CASE WHEN orderStatus = 'cancelled' THEN 1 END) AS allCancelledOrders,
+		COUNT(CASE WHEN shipmentType = 'airFreight' AND orderType = 'import' THEN 1 END) AS allImportAF,
+		COUNT(CASE WHEN shipmentType = 'lcl' AND orderType = 'import' THEN 1 END) AS allImportLCL,
+		COUNT(CASE WHEN shipmentType = 'fcl' AND orderType = 'import' THEN 1 END) AS allImportFCL,
+		COUNT(CASE WHEN shipmentType = 'airFreight' AND orderType = 'export' THEN 1 END) AS allExportAF,
+		COUNT(CASE WHEN shipmentType = 'lcl' AND orderType = 'export' THEN 1 END) AS allExportLCL,
+		COUNT(CASE WHEN shipmentType = 'fcl' AND orderType = 'export' THEN 1 END) AS allExportFCL
+            FROM OrderDocs
+                    `;
+
 module.exports = {
     fetchAgentID,
     retrieveOrders,
@@ -425,5 +440,6 @@ module.exports = {
     retrieveInPtogressOrders,
     retrieveCancelledOrders,
     retrieveCompletedOrdersForAgent,
-    retrieveOrderWithOrderNumber
+    retrieveOrderWithOrderNumber,
+    orderCounts
 };

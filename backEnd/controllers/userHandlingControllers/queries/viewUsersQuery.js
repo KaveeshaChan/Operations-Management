@@ -48,8 +48,22 @@ const selectMainUsers = `
   FROM [FreightAgentAlloc_App].[dbo].[Main_Users]
         `;
 
+const freightShipments = `
+                SELECT 
+                        Freight_Agent,
+                        orderType,
+                        COUNT(CASE WHEN shipmentType = 'AirFreight' THEN 1 END) AS AirFreight_Count,
+                        COUNT(CASE WHEN shipmentType = 'LCL' THEN 1 END) AS LCL_Count,
+                        COUNT(CASE WHEN shipmentType = 'FCL' THEN 1 END) AS FCL_Count
+                FROM vw_FreightAgentShipments
+                WHERE orderType IN ('import', 'export')
+                GROUP BY Freight_Agent, orderType
+                ORDER BY Freight_Agent, orderType;
+        `;
+
 module.exports = {
     selectAllFreightAgents,
     selectFreightCoordinators,
-    selectMainUsers
+    selectMainUsers,
+    freightShipments
 };

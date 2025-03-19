@@ -126,9 +126,24 @@ const selectSelectedOrderDetails = `
                 WHERE OrderQuoteID = @OrderQuoteID
                 `;
 
+const selectQuoteCounts = `
+SELECT od.orderNumber,
+       od.emailCount,
+       COUNT(DISTINCT q.AgentID) AS quotationCount,
+       DATEADD(DAY, od.dueDate, od.orderCreatedDate) AS actualDueDate,
+       DATEDIFF(DAY, GETUTCDATE(), DATEADD(DAY, od.dueDate, od.orderCreatedDate)) AS daysRemaining,
+       od.orderStatus
+FROM FreightAgentAlloc_App.dbo.OrderDocs od
+LEFT JOIN FreightAgentAlloc_App.dbo.Order_Quotations q 
+    ON od.orderNumber = q.orderNumber
+WHERE od.orderStatus != 'cancelled'
+GROUP BY od.orderNumber, od.emailCount, od.dueDate, od.orderCreatedDate, od.orderStatus;
+`;
+
 module.exports = {
     viewQuotationForOrder,
     selectQuoteForOrder,
     selectPreviousQuotes,
-    selectSelectedOrderDetails
+    selectSelectedOrderDetails,
+    selectQuoteCounts
 };

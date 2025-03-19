@@ -47,6 +47,22 @@ router.post("/export-airFreight", async (req, res) => {
       const transaction = pool.transaction();
       await transaction.begin();
 
+      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+      })
+  
+      if (!agentEmailsResult.ok) {
+        throw new Error('Failed to fetch agent emails');
+      }
+  
+      const agentEmailsData = await agentEmailsResult.json();
+      const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
+      const activeEmailCount = agentEmailsData.agents.length;
+
     // Insert into the database inside the transaction
     await transaction
       .request()
@@ -69,22 +85,8 @@ router.post("/export-airFreight", async (req, res) => {
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
       .input("dueDate", sql.Int, dueDate)
+      .input("emailCount", sql.Int, activeEmailCount)
       .query(addExportAirFreight);
-
-    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-    })
-
-    if (!agentEmailsResult.ok) {
-      throw new Error('Failed to fetch agent emails');
-    }
-
-    const agentEmailsData = await agentEmailsResult.json();
-    const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
     // Prepare email payload
     const emailPayload = {
@@ -162,6 +164,22 @@ router.post('/export-lcl', async (req, res) => {
       const transaction = pool.transaction();
       await transaction.begin();
 
+      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+      })
+
+      if (!agentEmailsResult.ok) {
+        throw new Error('Failed to fetch agent emails');
+      }
+
+      const agentEmailsData = await agentEmailsResult.json();
+      const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
+      const activeEmailCount = agentEmailsData.agents.length; 
+
     // Insert the new order into the database
     await transaction
       .request()
@@ -183,22 +201,8 @@ router.post('/export-lcl', async (req, res) => {
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
       .input("dueDate", sql.Int, dueDate)
+      .input("emailCount", sql.Int, activeEmailCount)
       .query(addExportLCL);
-
-      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-      })
-
-      if (!agentEmailsResult.ok) {
-        throw new Error('Failed to fetch agent emails');
-      }
-
-      const agentEmailsData = await agentEmailsResult.json();
-      const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
     // Prepare email payload
     const emailPayload = {
@@ -278,6 +282,22 @@ router.post('/export-fcl', async (req, res) => {
       const transaction = pool.transaction();
       await transaction.begin();
 
+      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+      })
+
+      if (!agentEmailsResult.ok) {
+        throw new Error('Failed to fetch agent emails');
+      }
+
+      const agentEmailsData = await agentEmailsResult.json();
+      const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
+      const activeEmailCount = agentEmailsData.agents.length; 
+
       // Insert the order inside the transaction
       await transaction
           .request()
@@ -296,22 +316,8 @@ router.post('/export-fcl', async (req, res) => {
           .input("documentName", sql.VarChar, fileName || null)
           .input("createdBy", sql.VarChar, userId)
           .input("dueDate", sql.Int, dueDate)
+          .input("emailCount", sql.Int, activeEmailCount)
           .query(addExportFCL);
-
-      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-      })
-
-      if (!agentEmailsResult.ok) {
-        throw new Error('Failed to fetch agent emails');
-      }
-
-      const agentEmailsData = await agentEmailsResult.json();
-      const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
       
     // Prepare email payload
     const emailPayload = {
@@ -394,6 +400,23 @@ router.post('/import-airFreight', async (req, res) => {
           // Start a SQL transaction
           const transaction = pool.transaction();
           await transaction.begin();
+
+          const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+          })
+    
+          if (!agentEmailsResult.ok) {
+            throw new Error('Failed to fetch agent emails');
+          }
+    
+          const agentEmailsData = await agentEmailsResult.json();
+          const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
+          const activeEmailCount = agentEmailsData.agents.length; 
+
     // Insert the new order into the database
     await transaction
       .request()
@@ -418,22 +441,8 @@ router.post('/import-airFreight', async (req, res) => {
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
       .input("dueDate", sql.Int, dueDate)
+      .input("emailCount", sql.Int, activeEmailCount)
       .query(addImportAirFreight);
-
-      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-      })
-
-      if (!agentEmailsResult.ok) {
-        throw new Error('Failed to fetch agent emails');
-      }
-
-      const agentEmailsData = await agentEmailsResult.json();
-      const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
     // Prepare email payload
     const emailPayload = {
@@ -513,6 +522,22 @@ router.post('/import-lcl', async (req, res) => {
     const transaction = pool.transaction();
     await transaction.begin(); 
 
+    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+    })
+
+    if (!agentEmailsResult.ok) {
+      throw new Error('Failed to fetch agent emails');
+    }
+
+    const agentEmailsData = await agentEmailsResult.json();
+    const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
+    const activeEmailCount = agentEmailsData.agents.length; 
+
   // Insert the new order into the database
   await transaction
     .request()
@@ -535,22 +560,8 @@ router.post('/import-lcl', async (req, res) => {
     .input("documentName", sql.VarChar, fileName || null)
     .input("createdBy", sql.VarChar, userId)
     .input("dueDate", sql.Int, dueDate)
+    .input("emailCount", sql.Int, activeEmailCount)
     .query(addImportLCL);
-
-    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-    })
-
-    if (!agentEmailsResult.ok) {
-      throw new Error('Failed to fetch agent emails');
-    }
-
-    const agentEmailsData = await agentEmailsResult.json();
-    const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
     // Prepare email payload
     const emailPayload = {
@@ -625,7 +636,25 @@ router.post('/import-fcl', async (req, res) => {
   const buffer = fileUpload ? Buffer.from(fileUpload, "base64") : null;
 
   try {
-c
+    // Start a SQL transaction
+    const transaction = pool.transaction();
+    await transaction.begin(); 
+
+    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+    })
+
+    if (!agentEmailsResult.ok) {
+      throw new Error('Failed to fetch agent emails');
+    }
+
+    const agentEmailsData = await agentEmailsResult.json();
+    const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
+    const activeEmailCount = agentEmailsData.agents.length; 
 
     // Insert the new order into the database
     await transaction
@@ -646,22 +675,8 @@ c
       .input("documentName", sql.VarChar, fileName || null)
       .input("createdBy", sql.VarChar, userId)
       .input("dueDate", sql.Int, dueDate)
+      .input("emailCount", sql.Int, activeEmailCount)
       .query(addImportFCL);
-
-    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-    })
-
-    if (!agentEmailsResult.ok) {
-      throw new Error('Failed to fetch agent emails');
-    }
-
-    const agentEmailsData = await agentEmailsResult.json();
-    const activeAgentEmails = agentEmailsData.agents.map(agent => agent.Email).join(",");
 
     // Prepare email payload
     const emailPayload = {

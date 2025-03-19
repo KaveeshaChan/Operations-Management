@@ -1,6 +1,6 @@
 const express = require("express");
 const { sql, poolPromise } = require("../../../config/database");
-const { viewQuotationForOrder } = require('../queries/quotationQueries/quotationsQuery');
+const { viewQuotationForOrder, selectQuoteCounts } = require('../queries/quotationQueries/quotationsQuery');
 const { authorizeRoles } = require('../../../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -39,6 +39,21 @@ router.get("/", authorizeRoles(['freightAgent', 'coordinator']), async (req, res
             .query(viewQuotationForOrder);
 
         return res.status(200).json({ message: "Quotes retrieved successfully.", quotes: quotesQuery.recordset });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+    }
+});
+
+router.get("/quote-counts", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+    try {
+        const pool = await poolPromise;
+
+        // Retrieve Orders
+        const quoteCounts = await pool
+            .request()
+            .query(selectQuoteCounts);
+        return res.status(200).json({ quoteCounts: quoteCounts.recordset });
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ message: "Internal Server Error.", error: error.message });

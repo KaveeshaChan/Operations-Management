@@ -7,7 +7,7 @@ const { fetchAgentID,
         retrieveCompletedOrders, 
         retrieveInPtogressOrders,
         retrieveCancelledOrders,
-        retrieveCompletedOrdersForAgent } = require('./queries/viewOrdersToAgentsQuery');
+        retrieveCompletedOrdersForAgent, orderCounts } = require('./queries/viewOrdersToAgentsQuery');
 const { selectPreviousQuotes } = require('./queries/quotationQueries/quotationsQuery');
 const { authorizeRoles } = require('../../middlewares/authMiddleware');
 const router = express.Router();
@@ -177,6 +177,55 @@ router.get("/quoted", authorizeRoles(['freightAgent', 'coordinator']), async (re
   } catch (error) {
       console.error("Database error:", error);
       return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+  }
+});
+
+router.get("/order-counts", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+
+  try {
+    const pool = await poolPromise;
+
+      // Retrieve Orders
+      const result = await pool
+          .request()
+          .query(orderCounts);
+
+      return res.status(200).json({ orderCounts: result.recordset[0] });
+  } catch (error) {
+      console.error("Database error:", error);
+      return res.status(500).json({ message: "Internal Server Error.", error: error.message });
+  }
+});
+
+router.get("/cancelled-counts", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
+  const { cancelledFilterType, cancelledFilterValue } = req.query;
+
+  try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    let query = `SELECT 
+      COUNT(CASE WHEN orderStatus = 'cancelled' THEN 1 END) AS allCancelledOrders
+      FROM OrderDocs `;
+
+      if (cancelledFilterType === 'year') {
+        query += ` WHERE YEAR(cancelledDate) = @year`;
+        request.input('year', sql.Int, parseInt(cancelledFilterValue));
+      } else if (cancelledFilterType === 'month') {
+        const [year, month] = cancelledFilterValue.split('-');
+        query += ` WHERE YEAR(cancelledDate) = @year AND MONTH(cancelledDate) = @month`;
+        request.input('year', sql.Int, parseInt(year));
+        request.input('month', sql.Int, parseInt(month));
+      } else if (cancelledFilterType === 'date') {
+        query += ` WHERE CAST(cancelledDate AS DATE) = @date`;
+        request.input('date', sql.Date, new Date(cancelledFilterValue));
+      }
+
+    const result = await request.query(query);
+    return res.status(200).json({ cancelledCounts: result.recordset[0] });
+  } catch (error) {
+    console.error("Database error:", error);
+    return res.status(500).json({ message: "Internal Server Error.", error: error.message });
   }
 });
   

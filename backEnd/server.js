@@ -43,7 +43,7 @@ app.use(upload.single('documentDetails')); // Automatically handle single-file u
 // CORS Configuration
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3001', // Dynamic origin from .env
+    origin: process.env.CLIENT_URL || 'http://localhost:3000', // Dynamic origin from .env
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
     credentials: true,
   })

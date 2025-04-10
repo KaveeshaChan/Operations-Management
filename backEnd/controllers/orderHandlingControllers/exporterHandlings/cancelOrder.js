@@ -36,7 +36,7 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
       const orderNumber = result.output.OrderNumber;
 
       // Fetch freight agent emails
-      const agentEmailsResponse = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+      const agentEmailsResponse = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
       };
 
       // Send email
-      const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+      const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',

@@ -190,8 +190,8 @@ router.post('/forgot-password', async (req, res) => {
       })
     }
 
-    // Send email (this could call your existing email API)
-    const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+    // Send email
+    const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'

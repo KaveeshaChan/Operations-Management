@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const { authorizeRoles } = require('./middlewares/authMiddleware');
 const cron = require('node-cron');
 const path = require('path');
+const { poolPromise } = require('./config/database');
 
 // Route imports
 const registerRoute = require('./auth/register');
@@ -40,15 +41,26 @@ const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage });
 app.use(upload.single('documentDetails')); // Automatically handle single-file uploads named 'documentDetails'
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://192.168.100.8:8087'
+];
+
 // CORS Configuration
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000', // Dynamic origin from .env
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    origin: function (origin, callback) {
+      // Allow requests with no origin (e.g., curl or mobile apps)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
 );
-
 // Routes
 app.use('/api', registerRoute);
 app.use('/api', loginAndLogoutRoute);

@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
     };
 
     // Send email (this could call your existing email API)
-    const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+    const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -94,7 +94,7 @@ router.post('/', async (req, res) => {
         await transaction.rollback();
     }
 
-    res.status(500).json({ message: 'Failed to add order or send email. ' + err.message });
+    res.status(500).json({ message: 'Failed to add freight agent or send email. ' + err.message });
 }
 });
 

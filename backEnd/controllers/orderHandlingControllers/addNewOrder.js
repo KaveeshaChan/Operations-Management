@@ -47,7 +47,7 @@ router.post("/export-airFreight", async (req, res) => {
       const transaction = pool.transaction();
       await transaction.begin();
 
-      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+      const agentEmailsResult = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ router.post("/export-airFreight", async (req, res) => {
     };
 
     // Send email
-    const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+    const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -164,7 +164,7 @@ router.post('/export-lcl', async (req, res) => {
       const transaction = pool.transaction();
       await transaction.begin();
 
-      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+      const agentEmailsResult = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ router.post('/export-lcl', async (req, res) => {
     };
 
       // Send email
-      const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+      const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -282,7 +282,7 @@ router.post('/export-fcl', async (req, res) => {
       const transaction = pool.transaction();
       await transaction.begin();
 
-      const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+      const agentEmailsResult = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -335,7 +335,7 @@ router.post('/export-fcl', async (req, res) => {
     };
 
       // Send email (this could call your existing email API)
-      const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+      const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -401,7 +401,7 @@ router.post('/import-airFreight', async (req, res) => {
           const transaction = pool.transaction();
           await transaction.begin();
 
-          const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+          const agentEmailsResult = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -460,7 +460,7 @@ router.post('/import-airFreight', async (req, res) => {
     };
 
       // Send email (this could call your existing email API)
-      const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+      const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json'
@@ -499,7 +499,7 @@ router.post('/import-lcl', async (req, res) => {
 
   if (!orderType || !shipmentType || !orderNumber || !routeFrom || !routeTo || !shipmentReadyDate || 
     !deliveryTerm || !type || !numberOfPallets || !palletCBM || !grossWeight || !cargoCBM || !targetDate || !userId) {
-    return res.status(400).json({ message: 'All fields are required. bck' });
+    return res.status(400).json({ message: 'All fields are required.' });
   }
 
   const pool = await poolPromise; // Get database connection
@@ -522,7 +522,7 @@ router.post('/import-lcl', async (req, res) => {
     const transaction = pool.transaction();
     await transaction.begin(); 
 
-    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+    const agentEmailsResult = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -579,7 +579,7 @@ router.post('/import-lcl', async (req, res) => {
     };
 
     // Send email (this could call your existing email API)
-    const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+    const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -640,7 +640,7 @@ router.post('/import-fcl', async (req, res) => {
     const transaction = pool.transaction();
     await transaction.begin(); 
 
-    const agentEmailsResult = await fetch('http://localhost:5056/api/select/view-freight-agents/emails', {
+    const agentEmailsResult = await fetch('http://192.168.100.20:5056/api/select/view-freight-agents/emails', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -694,7 +694,7 @@ router.post('/import-fcl', async (req, res) => {
     };
 
     // Send email (this could call your existing email API)
-    const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+    const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'

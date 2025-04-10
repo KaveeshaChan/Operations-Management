@@ -96,7 +96,7 @@ router.post("/", authorizeRoles(['admin', 'mainUser']), async (req, res) => {
         };
 
         // Send email notification
-        const emailResponse = await fetch('http://localhost:5056/api/send-email/', {
+        const emailResponse = await fetch('http://192.168.100.20:5056/api/send-email/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

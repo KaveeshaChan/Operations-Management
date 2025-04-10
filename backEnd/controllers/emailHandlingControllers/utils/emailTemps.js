@@ -10,10 +10,10 @@ function generateFreightRequestEmail({ orderNumber, routeFrom, routeTo, shipment
         <table style="width: 100%; text-align: center; margin-bottom: 20px;">
             <tr>
                 <td style="width: 50%; text-align: right; padding-right: 10px;">
-                    <img src="localhost:5056/src/images/logo/basilurlogo.png" alt="Basilur Logo" style="max-height: 60px;">
+                    <img src="192.168.100.20:5056/src/images/logo/basilurlogo.png" alt="Basilur Logo" style="max-height: 60px;">
                 </td>
                 <td style="width: 50%; text-align: left; padding-left: 10px;">
-                    <img src="localhost:5056/src/images/logo/CargoLogo.png" alt="Cargo Connect Logo" style="max-height: 60px;">
+                    <img src="192.168.100.20:5056/src/images/logo/CargoLogo.png" alt="Cargo Connect Logo" style="max-height: 60px;">
                 </td>
             </tr>
         </table>
@@ -37,11 +37,11 @@ function generateFreightRequestEmail({ orderNumber, routeFrom, routeTo, shipment
 
         <div style="text-align: center; margin: 20px 0;">
             <p><strong>Action Required:</strong> Please submit your quotation through our system.</p>
-            <a href="http://localhost:3000/login" style="background-color: #2c5f2d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            <a href="http://192.168.100.8:8087/login" style="background-color: #2c5f2d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
                 Submit Quotation
             </a>
             <p>If the button above doesn't work, copy and paste this link:<br>
-            <a href="http://localhost:3000/login">http://localhost:3000/login</a></p>
+            <a href="http://192.168.100.8:8087/login">http://192.168.100.8:8087/login</a></p>
         </div>
 
         <div style="border-top: 1px solid #eeeeee; padding-top: 10px; font-size: 0.9em; color: #666;">
@@ -79,8 +79,8 @@ function generateNewFreightAgentEmail({ name, email, password }) {
                             <tr>
                                 <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; width: 40%;"><strong>Login URL</strong></td>
                                 <td style="padding: 12px; border-bottom: 1px solid #e0e0e0;">
-                                    <a href="http://localhost:3000/login" style="color: #1a0dab; text-decoration: none;">
-                                        http://localhost:3000/login
+                                    <a href="http://192.168.100.8:8087/login" style="color: #1a0dab; text-decoration: none;">
+                                        http://192.168.100.8:8087/login
                                     </a>
                                 </td>
                             </tr>
@@ -138,7 +138,7 @@ function generatePasswordResetEmail({ resetToken, email }) {
                     </div>
 
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="http://localhost:3000/password-reset?token=${resetToken}" 
+                        <a href="http://192.168.100.8:8087/password-reset?token=${resetToken}" 
                            style="background-color: #2c5f2d; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
                             Reset Password
                         </a>

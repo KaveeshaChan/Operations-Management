@@ -7,6 +7,7 @@ const router = express.Router();
 
 //export
 router.post("/export-airFreight",async (req, res) => {
+  
   try {
     const pool = await poolPromise;
 
@@ -292,7 +293,7 @@ router.post('/import-lcl',async (req, res) => {
       let palletCBM;
 
       if (checkOrder.recordset.length > 0) {
-        palletCBM = checkOrder.recordset[0].palletCBM;       ;
+        palletCBM = checkOrder.recordset[0].palletCBM;
   
       } else {
         return res.status(400).json({ message: "There is no order with this order number." });

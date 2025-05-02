@@ -70,7 +70,7 @@ app.use('/api/addFreightAgentCoordinator', authorizeRoles(['admin', 'mainUser'])
 app.use('/api/add-main-user', authorizeRoles(['admin']), addMainUserRoute);
 app.use('/api/orderHandling', authorizeRoles(['admin', 'mainUser', 'freightAgent', 'coordinator']), orderHandlingRoute);
 app.use('/api/select', authorizeRoles(['admin', 'mainUser', 'freightAgent', 'coordinator']), selectRoute)
-app.use('/api/update', authorizeRoles(['admin', 'mainUser']), updateRoutes)
+app.use('/api/update', authorizeRoles(['admin', 'mainUser', 'freightAgent', 'coordinator']), updateRoutes)
 
 // Schedule the cleanup job to run at midnight every day
 cron.schedule('0 0 * * *', async () => {
